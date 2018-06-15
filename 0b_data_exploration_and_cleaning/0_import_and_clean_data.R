@@ -61,11 +61,11 @@ dataset %<>%
   )
 
 ## Split ICD 9 codes into more granular categories:
-dataset %>% 
+dataset %<>% 
   dplyr::mutate(
     icd9_top = as.factor(substring(icd9_code, 1, 1)),
     icd9_general = as.factor(substring(icd9_code, 1, 3))
-  ) %>% View()
+  )
 
 ## Examine the imported and cleaned dataset:
 # dplyr::glimpse(dataset)
