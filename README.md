@@ -25,3 +25,10 @@ Create a web page that both summarizes the composition of and highlights the out
 
 - Data cleaning is not included in the main dashboard code.
 - Values are not hard-coded.
+
+## Todo / Ideas
+
+- For anomaly detection: Perhaps incorporate t-SNE?
+  - [Google Talks overview](https://medium.com/@Zelros/anomaly-detection-with-t-sne-211857b1cd00)
+  - [Conceptual text overview, with implementation instructions for R and Python](https://www.analyticsvidhya.com/blog/2017/01/t-sne-implementation-r-python/)
+- Break up ICD 10 codes by general category? (https://www.webpt.com/blog/post/understanding-icd-10-code-structure)
