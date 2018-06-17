@@ -51,7 +51,7 @@ set.seed(3)
 system.time(
   tsne_model <- Rtsne::Rtsne(
     # model_matrix[1:1000,],  ## Take a sample for faster tsne development
-    model_matrix[sample(1:nrow(model_matrix), 2000, replace = FALSE),1:15],
+    model_matrix[sample(1:nrow(model_matrix), 2000, replace = FALSE),c(1:14, 16:744)],
     theta = 0.8,
     pca = TRUE,
     check_duplicates = FALSE,  ## We've already deduplicated
