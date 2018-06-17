@@ -70,9 +70,3 @@ dataset %<>%
 ## Examine the imported and cleaned dataset:
 # dplyr::glimpse(dataset)
 # View(dataset)
-
-
-
-
-
-
