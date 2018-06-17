@@ -93,17 +93,24 @@ tsne_model$Y %>%
     geom_point(size = 0.25)
 
 
-vegalite::vegalite(
+vega_spec <- vegalite::vegalite(
   export = TRUE,  # For 
   renderer = 'svg'  # For png ('canvas') vs. svg ('svg') exporting
 ) %>%
   cell_size(500, 300) %>%
-  add_data(tsne_model$Y %>% as_data_frame()) %>%
+  add_data(tsne_model$Y %>% as_data_frame() %>% slice(1:5)) %>%
   encode_x("V2", "quantitative") %>%
   encode_y("V1", "quantitative") %>%
-  mark_point()
+  mark_point() %>% 
+  to_spec() %>% 
+  jsonlite::fromJSON()
 
+## Add interactivity, following https://vega.github.io/vega-lite/docs/selection.html#type,
+## as it seems not to yet be implemented in the R package
+vega_spec$selection$pts$type <- 'interval'
 
+## Produces a working vega spec, usable at https://vega.github.io/editor/#/edited
+vega_spec %>% jsonlite::toJSON(auto_unbox = TRUE) %>% clipr::write_clip()
 
 
 ## Using variables 1:12 (i.e., excluding age and ICD9 codes)
