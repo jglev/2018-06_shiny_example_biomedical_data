@@ -50,12 +50,13 @@ model_matrix <- c(
 set.seed(3)
 system.time(
   tsne_model <- Rtsne::Rtsne(
-    # model_matrix[1:1000,],  ## Take a sample for faster tsne development
-    model_matrix[sample(1:nrow(model_matrix), 2000, replace = FALSE),c(1:14, 16:744)],
+    # model_matrix,
+      ## Take a sample for faster tsne development
+      model_matrix[sample(1:nrow(model_matrix), 5000, replace = FALSE),c(1:14, 16:744)],
     theta = 0.8,
     pca = TRUE,
     check_duplicates = FALSE,  ## We've already deduplicated
-    perplexity = 50,
+    perplexity = 40,
     dims = 2,
     verbose = TRUE
     ## For max_iter, default is 1000, but a test with the full dataset
