@@ -51,7 +51,7 @@ set.seed(3)
 system.time(
   tsne_model <- Rtsne::Rtsne(
     # model_matrix[1:1000,],  ## Take a sample for faster tsne development
-    model_matrix[sample(1:nrow(model_matrix), 2000, replace = FALSE),1:2],
+    model_matrix[sample(1:nrow(model_matrix), 2000, replace = FALSE),1:14],
     theta = 0.8,
     pca = TRUE,
     check_duplicates = FALSE,  ## We've already deduplicated
@@ -74,6 +74,9 @@ tsne_model$Y %>%
   as_tibble() %>% 
   ggplot(aes(x = V1, y = V2)) + 
     geom_point(size = 0.25)
+
+## Using variables 1:12 (i.e., excluding age and ICD9 codes)
+## does give me more standard t-sne 2D visualization results.
 
 ## Use if dims == 1 above
 # tsne_model$Y %>% 
