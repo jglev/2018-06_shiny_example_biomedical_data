@@ -1,7 +1,16 @@
 ## Explore the use of t-sne with these data for outlier / anomaly detection
 
+# Load libraries ----------------------------------------------------------
+
+library('ggplot2')
+library('tidyverse')
+library('vegalite')
+
+# Implement t-sne ---------------------------------------------------------
+
 ## See https://www.analyticsvidhya.com/blog/2017/01/t-sne-implementation-r-python/
 ## and https://www.r-bloggers.com/playing-with-dimensions-from-clustering-pca-t-sne-to-carl-sagan/
+## For more re: t-sne interpretation, see https://distill.pub/2016/misread-tsne/
 
 # Load packages -----------------------------------------------------------
 
@@ -38,6 +47,13 @@ model_matrix <- c(
         ## Remove missing data, so that all returned columns are of
         ## equal length:
         na.omit() %>% 
+        ## Scale noted_age, following https://stats.stackexchange.com/a/218153,
+        ## which notes that scaling allows t-sne to treat all variables more
+        ## equally, rather than giving higher attention to larger-variance
+        ## variables:
+        dplyr::mutate(
+          age = 
+        ) %>% 
         model.matrix(formula(paste0('~ 0 + ', x)), .) %>% 
         dplyr::as_tibble()
     }
@@ -52,16 +68,16 @@ system.time(
   tsne_model <- Rtsne::Rtsne(
     # model_matrix,
       ## Take a sample for faster tsne development
-      model_matrix[sample(1:nrow(model_matrix), 5000, replace = FALSE),c(1:14, 16:744)],
+      model_matrix[sample(1:nrow(model_matrix), 1000, replace = FALSE),c(1:14, 16:744)],
     theta = 0.8,
     pca = TRUE,
     check_duplicates = FALSE,  ## We've already deduplicated
     perplexity = 40,
     dims = 2,
-    verbose = TRUE
+    verbose = TRUE,
     ## For max_iter, default is 1000, but a test with the full dataset
     ## and verbose = TRUE showed error convergence after 700.
-    # max_iter = 700
+    max_iter = 5000
   )
 )
 ## Using just rows 1:1000 takes 42 seconds on my dev. laptop.
@@ -75,6 +91,20 @@ tsne_model$Y %>%
   as_tibble() %>% 
   ggplot(aes(x = V1, y = V2)) + 
     geom_point(size = 0.25)
+
+
+vegalite::vegalite(
+  export = TRUE,  # For 
+  renderer = 'svg'  # For png ('canvas') vs. svg ('svg') exporting
+) %>%
+  cell_size(500, 300) %>%
+  add_data(tsne_model$Y %>% as_data_frame()) %>%
+  encode_x("V2", "quantitative") %>%
+  encode_y("V1", "quantitative") %>%
+  mark_point()
+
+
+
 
 ## Using variables 1:12 (i.e., excluding age and ICD9 codes)
 ## does give me more standard t-sne 2D visualization results.
