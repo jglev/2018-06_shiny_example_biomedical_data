@@ -21,7 +21,25 @@ shinyUI(fluidPage(
     ),
     
     mainPanel(
-       
+      fluidRow(
+         plotOutput(
+           "plot1", height = 300,
+            # Equivalent to: click = clickOpts(id = "plot_click")
+            click = "plot1_click",
+            brush = brushOpts(
+              id = "plot1_brush"
+            )
+         )
+      ),
+      fluidRow(
+        h4("Clicked selection"),
+        verbatimTextOutput("click_selection")
+      ),
+      fluidRow(
+        h4("Brushed selection"),
+        verbatimTextOutput("brush_selection")
+      )
+
     )
   )
 ))
