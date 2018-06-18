@@ -33,13 +33,8 @@ shinyUI(fluidPage(
       ),
       fluidRow(
         h4("Clicked selection"),
-        verbatimTextOutput("click_selection")
-      ),
-      fluidRow(
-        h4("Brushed selection"),
-        verbatimTextOutput("brush_selection")
+        DT::dataTableOutput("plot_selection")
       )
-
     )
   )
 ))
