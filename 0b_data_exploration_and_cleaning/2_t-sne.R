@@ -52,7 +52,7 @@ model_matrix <- c(
         ## equally, rather than giving higher attention to larger-variance
         ## variables:
         dplyr::mutate(
-          age = 
+          noted_age = scale(noted_age, center = TRUE, scale = TRUE)
         ) %>% 
         model.matrix(formula(paste0('~ 0 + ', x)), .) %>% 
         dplyr::as_tibble()
@@ -68,7 +68,7 @@ system.time(
   tsne_model <- Rtsne::Rtsne(
     # model_matrix,
       ## Take a sample for faster tsne development
-      model_matrix[sample(1:nrow(model_matrix), 1000, replace = FALSE),c(1:14, 16:744)],
+      model_matrix[sample(1:nrow(model_matrix), 500, replace = FALSE),],
     theta = 0.8,
     pca = TRUE,
     check_duplicates = FALSE,  ## We've already deduplicated
@@ -77,7 +77,7 @@ system.time(
     verbose = TRUE,
     ## For max_iter, default is 1000, but a test with the full dataset
     ## and verbose = TRUE showed error convergence after 700.
-    max_iter = 5000
+    max_iter = 1000
   )
 )
 ## Using just rows 1:1000 takes 42 seconds on my dev. laptop.
