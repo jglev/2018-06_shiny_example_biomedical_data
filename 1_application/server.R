@@ -19,7 +19,7 @@ mtcars_subset <- mtcars %>%
 ## Define server-side logic
 shinyServer(function(input, output) {
   ## TODO: Get Vega working in Shiny.
-  output$plot1 <- renderPlot({
+  output$scatterplot <- renderPlot({
     mtcars_subset %>% ggplot(aes(wt, mpg)) + geom_point()
     # vegalite::vegalite(
     #   export = TRUE,  # For 
@@ -35,14 +35,14 @@ shinyServer(function(input, output) {
   plot_selection <- reactive({
     # Because it's a ggplot2, we don't need to supply xvar or yvar; if this
     # were a base graphics plot, we'd need those.
-    if (!is.null(input$plot1_brush)) {
+    if (!is.null(input$scatterplot_brush)) {
       # message("Printing brush")
-      # message(input$plot1_brush)
-      brushedPoints(mtcars_subset, input$plot1_brush)
-    } else if (!is.null(input$plot1_click)) {
+      # message(input$scatterplot_brush)
+      brushedPoints(mtcars_subset, input$scatterplot_brush)
+    } else if (!is.null(input$scatterplot_click)) {
       # message("Printing click")
-      # message(input$plot1_click)
-      nearPoints(mtcars_subset, input$plot1_click, addDist = TRUE)
+      # message(input$scatterplot_click)
+      nearPoints(mtcars_subset, input$scatterplot_click, addDist = TRUE)
     } else {
       mtcars_subset %>% dplyr::slice(0)  ## Return just the headings
     }
@@ -51,5 +51,13 @@ shinyServer(function(input, output) {
   output$plot_selection <- DT::renderDataTable({
     plot_selection()
   })
+  
+  output$selection_histogram <- renderPlot({
+    plot_selection() %>% 
+      ggplot(aes(x = wt)) +
+      geom_histogram(bins = 50)
+  })
+  
+  ## TODO: Implement multi-tiered flowing visualization
   
 })

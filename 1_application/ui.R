@@ -24,17 +24,20 @@ shinyUI(fluidPage(
     mainPanel(
       fluidRow(
          plotOutput(
-           'plot1', height = 300,
+           'scatterplot', height = 300,
             # Equivalent to: click = clickOpts(id = 'plot_click')
-            click = 'plot1_click',
+            click = 'scatterplot_click',
             brush = brushOpts(
-              id = 'plot1_brush'
+              id = 'scatterplot_brush'
             )
          )
       ),
       fluidRow(
-        h4('Clicked selection'),
-        DT::dataTableOutput('plot_selection')
+        h4('Selection'),
+        DT::dataTableOutput('plot_selection'),
+        plotOutput(
+          'selection_histogram', height = 300
+        )
       )
     )
   )
