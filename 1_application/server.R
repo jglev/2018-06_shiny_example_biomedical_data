@@ -54,12 +54,23 @@ shinyServer(function(input, output) {
     ## As in the examples from ?shiny::actionButton, depend on the
     ## actionButton. This will run once regardless, per that documentation
     ## example.
-    input$resample_button
+    
+    message(input$resample_button)
     
     dataset %>% 
       tibble::as.tibble() %>% 
       dplyr::select(mpg, cyl, disp, hp, wt, am, gear) %>% 
-      dplyr::sample_n(input$sample_size)
+      purrr::when(
+        ## If the resample button has been pressed, take a new sample.
+        ## Otherwise, return the full dataset
+        input$resample_button == 1 ~ (.) %>% 
+          dplyr::sample_n(input$sample_size),
+        ~ (.)
+      )
+    
+    ## Reset the actionButton, if necessary (so that resampling doesn't
+    ## happen every time the slider moves after the first button press:
+    input$resample_button <- 0
   })
   
   ## TODO: Get Vega working in Shiny.
