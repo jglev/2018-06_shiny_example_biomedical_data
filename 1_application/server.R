@@ -9,8 +9,10 @@ library(shiny)
 
 # Load data ---------------------------------------------------------------
 
+dataset <- mtcars
+
 # Following https://shiny.rstudio.com/gallery/plot-interaction-selecting-points.html
-mtcars_subset <- mtcars %>% 
+data_subset <- dataset %>% 
   tibble::as.tibble() %>% 
   dplyr::select(mpg, cyl, disp, hp, wt, am, gear)
 
@@ -18,15 +20,49 @@ mtcars_subset <- mtcars %>%
 
 ## Define server-side logic
 shinyServer(function(input, output) {
+  
+  output$resample_slider <- renderUI({
+    resample_slider_min <- dplyr::case_when(
+      nrow(dataset) > 1000 ~ 1000,
+      nrow(dataset) > 100 ~ 100,
+      TRUE ~ 1
+    )
+    resample_slider_max <- nrow(dataset)
+    resample_slider_step <- dplyr::case_when(
+      nrow(dataset) > 1000 ~ 100,
+      nrow(dataset) > 10 ~ 10,
+      TRUE ~ 1
+    )
+    
+    sliderInput(
+      'sample_size',
+      label = "Sample Size",
+      min = resample_slider_min,
+      max = resample_slider_max,
+      ## Tests with tsne show that runs are *much* faster at n ~ 1000
+      ## (at the cost of accuracy, but users probably aren't going to
+      ## want to wait for tens of minutes for a run to complete). Thus,
+      ## we'll set an initial value at max 1000.
+      value = min(
+        mean(resample_slider_min, resample_slider_max),
+        1000
+      ),
+      step = resample_slider_step,
+      round = TRUE,
+      animate = FALSE,
+      dragRange = TRUE
+    )
+  })
+  
   ## TODO: Get Vega working in Shiny.
   output$scatterplot <- renderPlot({
-    mtcars_subset %>% ggplot(aes(wt, mpg)) + geom_point()
+    data_subset %>% ggplot(aes(wt, mpg)) + geom_point()
     # vegalite::vegalite(
     #   export = TRUE,  # For 
     #   renderer = 'svg'  # For png ('canvas') vs. svg ('svg') exporting
     # ) %>%
     #   cell_size(500, 300) %>%
-    #   add_data(mtcars_subset) %>%
+    #   add_data(data_subset) %>%
     #   encode_x("wt", "quantitative") %>%
     #   encode_y("mpg", "quantitative") %>%
     #   mark_point()
@@ -38,12 +74,12 @@ shinyServer(function(input, output) {
     if (!is.null(input$scatterplot_brush)) {
       # message("Printing brush")
       # message(input$scatterplot_brush)
-      brushedPoints(mtcars_subset, input$scatterplot_brush)
+      brushedPoints(data_subset, input$scatterplot_brush)
     } else if (!is.null(input$scatterplot_click)) {
       # message("Printing click")
       # message(input$scatterplot_click)
       near_points <- nearPoints(
-        mtcars_subset,
+        data_subset,
         input$scatterplot_click, 
         addDist = TRUE
       )
@@ -53,11 +89,11 @@ shinyServer(function(input, output) {
       if (nrow(near_points) > 0) {
         near_points
       } else {
-        mtcars_subset
+        data_subset
       }
     } else {
-      # mtcars_subset %>% dplyr::slice(0)  ## Return just the headings
-      mtcars_subset
+      # data_subset %>% dplyr::slice(0)  ## Return just the headings
+      data_subset
     }
   })
   
@@ -67,7 +103,8 @@ shinyServer(function(input, output) {
   
   output$selection_histogram <- renderPlot({
     plot_selection() %>% 
-      ggplot(aes(x = wt)) +
+      mtcars %>% 
+      ggplot(aes(x = wt))
       geom_histogram(bins = 50)
   })
   

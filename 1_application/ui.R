@@ -17,14 +17,23 @@ shinyUI(fluidPage(
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
     sidebarPanel(
-       h3('Status Messages (TODO)'),
-       textOutput('status_output')
+      h3('Status Messages (TODO)'),
+      textOutput('status_output'),
+      h3('Data Sampler'),
+      uiOutput('resample_slider'),
+      actionButton(
+        'resample',
+        label = 'Resample',
+        icon = NULL,
+        width = NULL
+      )
     ),
     
     mainPanel(
       fluidRow(
          plotOutput(
-           'scatterplot', height = 300,
+           'scatterplot',
+           height = 300,
             # Equivalent to: click = clickOpts(id = 'plot_click')
             click = 'scatterplot_click',
             brush = brushOpts(
