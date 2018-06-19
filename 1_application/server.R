@@ -17,19 +17,23 @@ dataset <- mtcars
 ## Define server-side logic
 shinyServer(function(input, output) {
   
+  resample_slider_min <- dplyr::case_when(
+    nrow(dataset) > 1000 ~ 1000,
+    nrow(dataset) > 100 ~ 100,
+    TRUE ~ 1
+  )
+  resample_slider_max <- nrow(dataset)
+  resample_slider_step <- dplyr::case_when(
+    nrow(dataset) > 1000 ~ 100,
+    nrow(dataset) > 20 ~ 10,
+    TRUE ~ 1
+  )
+  resample_slider_value <- min(
+    mean(c(resample_slider_min, resample_slider_max)),
+    1000
+  )
+  
   output$resample_slider <- renderUI({
-    resample_slider_min <- dplyr::case_when(
-      nrow(dataset) > 1000 ~ 1000,
-      nrow(dataset) > 100 ~ 100,
-      TRUE ~ 1
-    )
-    resample_slider_max <- nrow(dataset)
-    resample_slider_step <- dplyr::case_when(
-      nrow(dataset) > 1000 ~ 100,
-      nrow(dataset) > 20 ~ 10,
-      TRUE ~ 1
-    )
-    
     sliderInput(
       'sample_size',
       label = "Sample Size",
@@ -39,10 +43,7 @@ shinyServer(function(input, output) {
       ## (at the cost of accuracy, but users probably aren't going to
       ## want to wait for tens of minutes for a run to complete). Thus,
       ## we'll set an initial value at max 1000.
-      value = min(
-        mean(resample_slider_min, resample_slider_max),
-        1000
-      ),
+      value = resample_slider_value,
       step = resample_slider_step,
       round = TRUE,
       animate = FALSE,
@@ -50,27 +51,20 @@ shinyServer(function(input, output) {
     )
   })
   
-  data_subset <- reactive({
-    ## As in the examples from ?shiny::actionButton, depend on the
-    ## actionButton. This will run once regardless, per that documentation
-    ## example.
-    
-    message(input$resample_button)
-    
+  resample_data <- function(sample_size = resample_slider_value) {
     dataset %>% 
       tibble::as.tibble() %>% 
       dplyr::select(mpg, cyl, disp, hp, wt, am, gear) %>% 
-      purrr::when(
-        ## If the resample button has been pressed, take a new sample.
-        ## Otherwise, return the full dataset
-        input$resample_button == 1 ~ (.) %>% 
-          dplyr::sample_n(input$sample_size),
-        ~ (.)
+      dplyr::sample_n(
+        as.integer(sample_size)
       )
+  }
+  
+  data_subset <- reactive({
+    input$resample_button
     
-    ## Reset the actionButton, if necessary (so that resampling doesn't
-    ## happen every time the slider moves after the first button press:
-    input$resample_button <- 0
+    # resample_data(resample_slider_value)
+    resample_data(input$sample_size)
   })
   
   ## TODO: Get Vega working in Shiny.
