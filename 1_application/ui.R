@@ -22,7 +22,7 @@ shinyUI(fluidPage(
       h3('Data Sampler'),
       uiOutput('resample_slider'),
       actionButton(
-        'resample',
+        'resample_button',
         label = 'Resample',
         icon = NULL,
         width = NULL
