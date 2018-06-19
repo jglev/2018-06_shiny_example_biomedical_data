@@ -60,13 +60,9 @@ shinyServer(function(input, output) {
       )
   }
   
-  data_subset <- reactive({
-    ## See ?actionButton for notes on triggering
-    input$resample_button
-    
+  ## Resample each time the action button is pressed
+  data_subset <- eventReactive(input$resample_button, {
     req(input$sample_size)
-    
-    # resample_data(resample_slider_value)
     resample_data(input$sample_size)
   })
   
