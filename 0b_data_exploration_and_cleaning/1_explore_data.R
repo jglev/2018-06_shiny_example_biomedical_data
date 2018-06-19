@@ -1,5 +1,12 @@
 # Explore the dataset, and generate ideas to communicate to stakeholders
 
+# Load packages -----------------------------------------------------------
+
+source('0a_helper_functions/check_packages.R')
+
+check_packages('magrittr')
+check_packages('tidyverse')
+
 # Load dataset ------------------------------------------------------------
 
 load(file.path('cache', 'cleaned_dataset.Rdata'))

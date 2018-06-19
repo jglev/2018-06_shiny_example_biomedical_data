@@ -2,20 +2,26 @@
 
 # Load libraries ----------------------------------------------------------
 
-library('ggplot2')
-library('tidyverse')
-library('vegalite')
+source('0a_helper_functions/check_packages.R')
+
+check_packages('ggplot2')
+check_packages('tidyverse')
+check_packages('Rtsne')
+check_packages('vegalite')
+
+# Load dataset ------------------------------------------------------------
+
+load(file.path('cache', 'cleaned_dataset.Rdata'))
+
+dataset_for_development <- dataset %>% 
+  ## Temporarily hard-coding a filter for development:
+  filter(`source` == 'cohort1')
 
 # Implement t-sne ---------------------------------------------------------
 
 ## See https://www.analyticsvidhya.com/blog/2017/01/t-sne-implementation-r-python/
 ## and https://www.r-bloggers.com/playing-with-dimensions-from-clustering-pca-t-sne-to-carl-sagan/
 ## For more re: t-sne interpretation, see https://distill.pub/2016/misread-tsne/
-
-# Load packages -----------------------------------------------------------
-
-check_packages('ggplot2')
-check_packages('Rtsne')
 
 # Structure data ----------------------------------------------------------
 
@@ -64,7 +70,7 @@ model_matrix <- c(
 
 ## This follows https://www.r-bloggers.com/playing-with-dimensions-from-clustering-pca-t-sne-to-carl-sagan/
 set.seed(3)
-system.time(
+# system.time(
   tsne_model <- Rtsne::Rtsne(
     # model_matrix,
       ## Take a sample for faster tsne development
@@ -79,7 +85,7 @@ system.time(
     ## and verbose = TRUE showed error convergence after 700.
     max_iter = 1000
   )
-)
+# )
 ## Using just rows 1:1000 takes 42 seconds on my dev. laptop.
 
 # str(tsne_model)
