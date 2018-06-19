@@ -32,12 +32,12 @@ shinyServer(function(input, output) {
     # Because it's a ggplot2, we don't need to supply xvar or yvar; if this
     # were a base graphics plot, we'd need those.
     if (!is.null(input$plot1_brush)) {
-      message("Printing brush")
-      message(input$plot1_brush)
+      # message("Printing brush")
+      # message(input$plot1_brush)
       brushedPoints(mtcars_subset, input$plot1_brush)
     } else if (!is.null(input$plot1_click)) {
-      message("Printing click")
-      message(input$plot1_click)
+      # message("Printing click")
+      # message(input$plot1_click)
       nearPoints(mtcars_subset, input$plot1_click, addDist = TRUE)
     } else {
       mtcars_subset %>% dplyr::slice(0)  ## Return just the headings
