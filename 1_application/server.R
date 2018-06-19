@@ -17,7 +17,6 @@ dataset <- mtcars
 ## Define server-side logic
 shinyServer(function(input, output) {
   
-  slider_values_ready <- FALSE
   resample_slider_min <- dplyr::case_when(
     nrow(dataset) > 1000 ~ 1000,
     nrow(dataset) > 100 ~ 100,
@@ -33,7 +32,6 @@ shinyServer(function(input, output) {
     mean(c(resample_slider_min, resample_slider_max)),
     1000
   )
-  slider_values_ready <- TRUE
   
   output$resample_slider <- renderUI({
     sliderInput(
@@ -66,11 +64,10 @@ shinyServer(function(input, output) {
     ## See ?actionButton for notes on triggering
     input$resample_button
     
-    if (slider_values_ready == TRUE) {
-      resample_data(input$sample_size)
-    } else {
-      resample_data(resample_slider_value)
-    }
+    req(input$sample_size)
+    
+    # resample_data(resample_slider_value)
+    resample_data(input$sample_size)
   })
   
   ## TODO: Get Vega working in Shiny.
