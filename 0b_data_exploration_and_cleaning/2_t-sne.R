@@ -2,7 +2,7 @@
 
 # Load libraries ----------------------------------------------------------
 
-source('0a_helper_functions/check_packages.R')
+source(file.path('..', '0a_helper_functions', 'check_packages.R'), local = TRUE)
 
 check_packages('ggplot2')
 check_packages('tidyverse')

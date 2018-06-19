@@ -4,8 +4,12 @@
 
 ## Load libraries ----------------------------------------------------------
 
-library(DT)
-library(shiny)
+source(file.path('..', '0a_helper_functions', 'check_packages.R'), local = TRUE)
+
+check_packages('DT')
+check_packages('shiny')
+check_packages('rVega')
+check_packages('vegalite')
 
 # Load data ---------------------------------------------------------------
 
@@ -67,17 +71,18 @@ shinyServer(function(input, output) {
   })
   
   ## TODO: Get Vega working in Shiny.
-  output$scatterplot <- renderPlot({
-    data_subset() %>% ggplot(aes(wt, mpg)) + geom_point()
-    # vegalite::vegalite(
-    #   export = TRUE,  # For 
-    #   renderer = 'svg'  # For png ('canvas') vs. svg ('svg') exporting
-    # ) %>%
-    #   cell_size(500, 300) %>%
-    #   add_data(data_subset()) %>%
-    #   encode_x("wt", "quantitative") %>%
-    #   encode_y("mpg", "quantitative") %>%
-    #   mark_point()
+  output$scatterplot <- renderVegalite({ 
+    # renderPlot({
+      # data_subset() %>% ggplot(aes(wt, mpg)) + geom_point()
+    vegalite::vegalite(
+      export = TRUE,  # For
+      renderer = 'svg'  # For png ('canvas') vs. svg ('svg') exporting
+    ) %>%
+      cell_size(500, 300) %>%
+      add_data(data_subset()) %>%
+      encode_x("wt", "quantitative") %>%
+      encode_y("mpg", "quantitative") %>%
+      mark_point()
   })
   
   plot_selection <- reactive({

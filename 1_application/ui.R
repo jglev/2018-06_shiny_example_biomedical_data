@@ -4,8 +4,9 @@
 
 ## Load libraries ----------------------------------------------------------
 
-library(shiny)
+source(file.path('..', '0a_helper_functions', 'check_packages.R'), local = TRUE)
 
+check_packages('shiny')
 
 ## Define UI ---------------------------------------------------------------
 
@@ -31,15 +32,16 @@ shinyUI(fluidPage(
     
     mainPanel(
       fluidRow(
-         plotOutput(
-           'scatterplot',
-           height = 300,
-            # Equivalent to: click = clickOpts(id = 'plot_click')
-            click = 'scatterplot_click',
-            brush = brushOpts(
-              id = 'scatterplot_brush'
-            )
-         )
+        vegaliteOutput('scatterplot')
+         # plotOutput(
+         #   'scatterplot',
+         #   height = 300,
+         #    # Equivalent to: click = clickOpts(id = 'plot_click')
+         #    click = 'scatterplot_click',
+         #    brush = brushOpts(
+         #      id = 'scatterplot_brush'
+         #    )
+         # )
       ),
       fluidRow(
         h4('Selection'),
