@@ -18,8 +18,18 @@ mtcars_subset <- mtcars %>%
 
 ## Define server-side logic
 shinyServer(function(input, output) {
+  ## TODO: Get Vega working in Shiny.
   output$plot1 <- renderPlot({
     mtcars_subset %>% ggplot(aes(wt, mpg)) + geom_point()
+    # vegalite::vegalite(
+    #   export = TRUE,  # For 
+    #   renderer = 'svg'  # For png ('canvas') vs. svg ('svg') exporting
+    # ) %>%
+    #   cell_size(500, 300) %>%
+    #   add_data(mtcars_subset) %>%
+    #   encode_x("wt", "quantitative") %>%
+    #   encode_y("mpg", "quantitative") %>%
+    #   mark_point()
   })
   
   output$click_selection <- renderPrint({
