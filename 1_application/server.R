@@ -32,13 +32,7 @@ shinyServer(function(input, output) {
     #   mark_point()
   })
   
-  output$click_selection <- renderPrint({
-    # Because it's a ggplot2, we don't need to supply xvar or yvar; if this
-    # were a base graphics plot, we'd need those.
-    nearPoints(mtcars_subset, input$plot1_click, addDist = TRUE)
-  })
-  
-  output$plot_selection <- DT::renderDataTable({
+  plot_selection <- reactive({
     # Because it's a ggplot2, we don't need to supply xvar or yvar; if this
     # were a base graphics plot, we'd need those.
     if (!is.null(input$plot1_brush)) {
@@ -54,9 +48,8 @@ shinyServer(function(input, output) {
     }
   })
   
-  output$brush_selection <- renderPrint({
-    
+  output$plot_selection <- DT::renderDataTable({
+    plot_selection()
   })
-  
   
 })
