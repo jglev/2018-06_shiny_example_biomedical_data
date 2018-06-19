@@ -42,9 +42,22 @@ shinyServer(function(input, output) {
     } else if (!is.null(input$scatterplot_click)) {
       # message("Printing click")
       # message(input$scatterplot_click)
-      nearPoints(mtcars_subset, input$scatterplot_click, addDist = TRUE)
+      near_points <- nearPoints(
+        mtcars_subset,
+        input$scatterplot_click, 
+        addDist = TRUE
+      )
+      
+      ## If a click is not near a point, show all points. Otherwise,
+      ## show just the selected point(s).
+      if (nrow(near_points) > 0) {
+        near_points
+      } else {
+        mtcars_subset
+      }
     } else {
-      mtcars_subset %>% dplyr::slice(0)  ## Return just the headings
+      # mtcars_subset %>% dplyr::slice(0)  ## Return just the headings
+      mtcars_subset
     }
   })
   
