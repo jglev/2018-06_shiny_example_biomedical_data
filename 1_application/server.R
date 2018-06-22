@@ -13,61 +13,78 @@ check_packages('vegalite')
 
 # Load data ---------------------------------------------------------------
 
-data(mtcars)
-dataset <- mtcars
+## This will load an object called dataset
+load(file.path('..', 'cache', 'cleaned_dataset.Rdata'))
 
 ## Define server logic -----------------------------------------------------
 
 ## Define server-side logic
 shinyServer(function(input, output) {
   
-  resample_slider_min <- dplyr::case_when(
-    nrow(dataset) > 1000 ~ 1000,
-    nrow(dataset) > 100 ~ 100,
-    TRUE ~ 1
-  )
-  resample_slider_max <- nrow(dataset)
-  resample_slider_step <- dplyr::case_when(
-    nrow(dataset) > 1000 ~ 100,
-    nrow(dataset) > 20 ~ 10,
-    TRUE ~ 1
-  )
-  resample_slider_value <- min(
-    mean(c(resample_slider_min, resample_slider_max)),
-    1000
-  )
+  # resample_slider_min <- dplyr::case_when(
+  #   nrow(dataset) > 1000 ~ 1000,
+  #   nrow(dataset) > 100 ~ 100,
+  #   TRUE ~ 1
+  # )
+  # resample_slider_max <- nrow(dataset)
+  # resample_slider_step <- dplyr::case_when(
+  #   nrow(dataset) > 1000 ~ 100,
+  #   nrow(dataset) > 20 ~ 10,
+  #   TRUE ~ 1
+  # )
+  # resample_slider_value <- min(
+  #   mean(c(resample_slider_min, resample_slider_max)),
+  #   1000
+  # )
+  # 
+  # output$resample_slider <- renderUI({
+  #   sliderInput(
+  #     'sample_size',
+  #     label = "Sample Size",
+  #     min = resample_slider_min,
+  #     max = resample_slider_max,
+  #     ## Tests with tsne show that runs are *much* faster at n ~ 1000
+  #     ## (at the cost of accuracy, but users probably aren't going to
+  #     ## want to wait for tens of minutes for a run to complete). Thus,
+  #     ## we'll set an initial value at max 1000.
+  #     value = resample_slider_value,
+  #     step = resample_slider_step,
+  #     round = TRUE,
+  #     animate = FALSE,
+  #     dragRange = TRUE
+  #   )
+  # })
+  # 
+  # resample_data <- function(sample_size = resample_slider_value) {
+  #   dataset %>% 
+  #     tibble::as.tibble() %>% 
+  #     dplyr::select(mpg, cyl, disp, hp, wt, am, gear) %>% 
+  #     dplyr::sample_n(
+  #       as.integer(sample_size)
+  #     )
+  # }
+  # 
+  # ## Resample each time the action button is pressed
+  # data_subset <- eventReactive(input$resample_button, {
+  #   req(input$sample_size)
+  #   resample_data(input$sample_size)
+  # })
   
-  output$resample_slider <- renderUI({
-    sliderInput(
-      'sample_size',
-      label = "Sample Size",
-      min = resample_slider_min,
-      max = resample_slider_max,
-      ## Tests with tsne show that runs are *much* faster at n ~ 1000
-      ## (at the cost of accuracy, but users probably aren't going to
-      ## want to wait for tens of minutes for a run to complete). Thus,
-      ## we'll set an initial value at max 1000.
-      value = resample_slider_value,
-      step = resample_slider_step,
-      round = TRUE,
-      animate = FALSE,
-      dragRange = TRUE
+  cohorts <- dataset %>% pull(source) %>% levels()
+  
+  output$filter_parameters <- renderUI({
+    selectInput(
+      "cohort",
+      label = "Cohort",
+      choices = cohorts,
+      selected = cohorts[1],
+      multiple = FALSE
     )
   })
   
-  resample_data <- function(sample_size = resample_slider_value) {
-    dataset %>% 
-      tibble::as.tibble() %>% 
-      dplyr::select(mpg, cyl, disp, hp, wt, am, gear) %>% 
-      dplyr::sample_n(
-        as.integer(sample_size)
-      )
-  }
-  
-  ## Resample each time the action button is pressed
-  data_subset <- eventReactive(input$resample_button, {
-    req(input$sample_size)
-    resample_data(input$sample_size)
+  ## TODO: Flesh this out once UI elements are in place above.
+  data_subset <- reactive({
+    dataset
   })
   
   ## TODO: Get Vega working in Shiny.

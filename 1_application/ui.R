@@ -20,8 +20,8 @@ shinyUI(fluidPage(
     sidebarPanel(
       h3('Status Messages (TODO)'),
       textOutput('status_output'),
-      h3('Data Sampler'),
-      uiOutput('resample_slider'),
+      h3('Highlight Datapoints'),
+      uiOutput('filter_parameters'),
       actionButton(
         'resample_button',
         label = 'Resample',
