@@ -9,7 +9,7 @@ check_packages('tidyverse')
 
 # Load dataset ------------------------------------------------------------
 
-load(file.path('cache', 'cleaned_dataset.Rdata'))
+load(file.path('..', 'cache', 'cleaned_dataset.Rdata'))
 
 dataset_for_development <- dataset %>% 
   ## Temporarily hard-coding a filter for development:
@@ -67,4 +67,5 @@ dataset_for_development %>%
       noted_age > (mean(noted_age) + sd(noted_age)*3) |
         noted_age < (mean(noted_age) - sd(noted_age)*3)
     )
+
 

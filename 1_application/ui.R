@@ -32,16 +32,15 @@ shinyUI(fluidPage(
     
     mainPanel(
       fluidRow(
-        vegaliteOutput('scatterplot')
-         # plotOutput(
-         #   'scatterplot',
-         #   height = 300,
-         #    # Equivalent to: click = clickOpts(id = 'plot_click')
-         #    click = 'scatterplot_click',
-         #    brush = brushOpts(
-         #      id = 'scatterplot_brush'
-         #    )
-         # )
+         plotOutput(
+           'scatterplot',
+           height = 300,
+            # Equivalent to: click = clickOpts(id = 'plot_click')
+            click = 'scatterplot_click',
+            brush = brushOpts(
+              id = 'scatterplot_brush'
+            )
+         )
       ),
       fluidRow(
         h4('Selection'),
