@@ -2,7 +2,7 @@
 
 # Load packages -----------------------------------------------------------
 
-source(file.path('..', '0a_helper_functions', 'check_packages.R'), local = TRUE)
+source(file.path('0a_helper_functions', 'check_packages.R'), local = TRUE)
 
 check_packages('magrittr')
 check_packages('tidyverse')

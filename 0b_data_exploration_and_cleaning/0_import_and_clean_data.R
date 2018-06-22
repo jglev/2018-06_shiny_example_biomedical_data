@@ -2,7 +2,7 @@
 
 # Load packages -----------------------------------------------------------
 
-source(file.path('..', '0a_helper_functions', 'check_packages.R'), local = TRUE)
+source(file.path('0a_helper_functions', 'check_packages.R'), local = TRUE)
 
 check_packages('magrittr')
 check_packages('tidyverse')
@@ -41,6 +41,7 @@ dataset <- list.dirs(
 dataset %<>% 
   dplyr::mutate(
     sex = as.factor(sex),
+    race = as.factor(race),
     ethnicity = as.factor(ethnicity),
     source = as.factor(source),
     icd9_code = as.factor(icd9_code)

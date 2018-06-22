@@ -70,15 +70,66 @@ shinyServer(function(input, output) {
   #   resample_data(input$sample_size)
   # })
   
-  cohorts <- dataset %>% pull(source) %>% levels()
+  get_levels <- function(column_name) {
+    dataset %>% pull(!!as.name(column_name)) %>% levels()
+  }
+  
+  cohorts <- get_levels('source')
+  sexes <- get_levels('sex')
+  races <- get_levels('race')
+  ethnicities <- get_levels('ethnicity')
+  icd9_generals <- get_levels('icd9_general')
   
   output$filter_parameters <- renderUI({
-    selectInput(
-      "cohort",
-      label = "Cohort",
-      choices = cohorts,
-      selected = cohorts[1],
-      multiple = FALSE
+    list(
+      selectInput(
+        "cohort",
+        label = "Cohort",
+        choices = cohorts,
+        selected = cohorts[1],
+        multiple = FALSE
+      ),
+      selectInput(
+        "sex",
+        label = "Sex",
+        choices = sexes,
+        multiple = TRUE
+      ),
+      selectInput(
+        "race",
+        label = "Race",
+        choices = races,
+        multiple = TRUE
+      ),
+      selectInput(
+        "ethnicities",
+        label = "Ethnicity",
+        choices = ethnicities,
+        multiple = TRUE
+      ),
+      selectInput(
+        "icd9_generals",
+        label = "ICD-9 General Category",
+        choices = icd9_generals,
+        multiple = TRUE
+      ),
+      selectInput(
+        "resolved",
+        label = "Resolved",
+        choices = list("Yes" = TRUE, "No" = FALSE),
+        multiple = TRUE
+      ),
+      sliderInput(
+        "noted_age",
+        label = "Age at Initial Incident Note",
+        min = dataset %>% pull(noted_age) %>% min(),
+        max = dataset %>% pull(noted_age) %>% max(),
+        value = c(
+          dataset %>% pull(noted_age) %>% min(),
+          dataset %>% pull(noted_age) %>% max()
+        ),
+        dragRange = TRUE
+      )
     )
   })
   

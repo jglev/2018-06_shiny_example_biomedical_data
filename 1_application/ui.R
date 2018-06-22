@@ -21,13 +21,13 @@ shinyUI(fluidPage(
       h3('Status Messages (TODO)'),
       textOutput('status_output'),
       h3('Highlight Datapoints'),
-      uiOutput('filter_parameters'),
-      actionButton(
-        'resample_button',
-        label = 'Resample',
-        icon = NULL,
-        width = NULL
-      )
+      uiOutput('filter_parameters')
+      # actionButton(
+      #   'resample_button',
+      #   label = 'Resample',
+      #   icon = NULL,
+      #   width = NULL
+      # )
     ),
     
     mainPanel(
