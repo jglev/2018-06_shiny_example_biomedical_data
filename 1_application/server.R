@@ -169,41 +169,7 @@ shinyServer(function(input, output) {
 
   # Create t-SNE scatterplot ------------------------------------------------
 
-  pull_tsne_points <- function(
-    output_from_tsne = tsne_output,
-    column = 'tsne_1d',
-    source_values_to_keep = NULL,
-    row_numbers_to_keep = NULL
-  ) {
-    tsne_output %>% 
-      tibble::rowid_to_column('row_number') %>% 
-      purrr::when(
-        !is.null(source_values_to_keep) ~ (.) %>% 
-          dplyr::filter(source %in% source_values_to_keep),
-        ~ (.)
-      ) %>% 
-      purrr::when(
-        !is.null(row_numbers_to_keep) ~ (.) %>% 
-          dplyr::filter(row_number %in% row_numbers_to_keep),
-        ~ (.)
-      ) %>% 
-      dplyr::pull(!!as.name(column)) %>% 
-      magrittr::extract2(1) %>% 
-      magrittr::extract2('Y')
-  }
   
-  oneD_tsne_plot_points <- tsne_output %>% 
-    pull_tsne_points(
-      output_from_tsne = tsne_output,
-      column = 'tsne_1d',
-      row_numbers_to_keep = data_subset() %>% dplyr::pull(row_number)
-    )
-  twoD_tsne_plot_points <- tsne_output %>% 
-    pull_tsne_points(
-      output_from_tsne = tsne_output,
-      column = 'tsne_1d',
-      row_numbers_to_keep = data_subset() %>% dplyr::pull(row_number)
-    )
   
   output$tsne_2d_scatterplot <- renderPlot({
     twoD_tsne_plot_points %>% 

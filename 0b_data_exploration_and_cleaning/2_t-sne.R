@@ -5,6 +5,7 @@
 source(file.path('0a_helper_functions', 'check_packages.R'), local = TRUE)
 
 check_packages('ggplot2')
+check_packages('magrittr')
 check_packages('tidyverse')
 check_packages('Rtsne')
 check_packages('vegalite')
@@ -12,6 +13,7 @@ check_packages('vegalite')
 # Load dataset ------------------------------------------------------------
 
 load(file.path('cache', 'cleaned_dataset.Rdata'))
+# load(file.path('cache', 'tsne_output.Rdata'))
 
 # Implement t-sne ---------------------------------------------------------
 
@@ -28,21 +30,25 @@ load(file.path('cache', 'cleaned_dataset.Rdata'))
 ## the RBloggers example indicates that it is fine with categorical data (in a
 ## wide matrix format).
 
-create_model_matrix <- function(filtered_dataset) {
+column_names_for_model_matrix <- c(
+  "source",
+  "sex",
+  "ethnicity",
+  "race",
+  "noted_age",
+  ## I'm using resolved rather than resolved_age, since the latter
+  ## includes so much missing data.
+  "resolved",
+  "icd9_general"
+)
+
+create_model_matrix <- function(
+  filtered_dataset,
+  vector_of_column_names
+) {
   ## Trying to compute one big matrix froze my computer, so I'm
   ## cbinding individual model matricies instead:
-  c(
-    "sex",
-    "ethnicity",
-    "race",
-    "noted_age",
-    ## I'm using resolved rather than resolved_age, since the latter
-    ## includes so much missing data.
-    "resolved",
-    # "icd9_top",
-    "icd9_general"# ,
-    # "icd9_code"
-  ) %>% 
+  vector_of_column_names %>% 
     purrr::map_dfc(
       function(x) {
         filtered_dataset %>% 
@@ -63,9 +69,10 @@ create_model_matrix <- function(filtered_dataset) {
 }
 
 tsne_output <- dataset %>% 
+  dplyr::select_at(column_names_for_model_matrix) %>% 
   dplyr::group_by(`source`) %>% 
   dplyr::do(
-    model_matrix = create_model_matrix(.)
+    model_matrix = create_model_matrix(., column_names_for_model_matrix)
   )
 # tsne_output
 
@@ -100,6 +107,46 @@ tsne_output %<>%
     tsne_2d = run_tSNE(model_matrix, number_of_dimensions = 2) %>% 
       list()
   )
+
+# Join dataset to t-SNE output --------------------------------------------
+
+## Since each row of original data has just one cohort and thus was
+## used in just one model, we will join the t-SNE output back to the
+## dataset for later ease of use.
+
+pull_tsne_points <- function(
+  output_from_tsne = tsne_output,
+  column = 'tsne_1d',
+  cohort_values_to_keep = NULL
+) {
+  tsne_output %>% 
+    purrr::when(
+      !is.null(cohort_values_to_keep) ~ (.) %>% 
+        dplyr::filter(source %in% cohort_values_to_keep),
+      ~ (.)
+    ) %>% 
+    dplyr::pull(!!as.name(column)) %>% 
+    magrittr::extract2(1) %>% 
+    magrittr::extract2('Y')
+}
+
+oneD_tsne_plot_points <- tsne_output %>% 
+  pull_tsne_points(
+    column = 'tsne_1d',
+    cohort_values_to_keep = 'cohort1'
+  )
+twoD_tsne_plot_points <- tsne_output %>% 
+  pull_tsne_points(
+    column = 'tsne_1d',
+    cohort_values_to_keep = 'cohort1'
+  ) %>% nrow()
+
+dataset %>% 
+  dplyr::select_at(column_names_for_model_matrix) %>% 
+  na.omit() %>% 
+  dplyr::filter(source == 'cohort1') %>% nrow()
+
+
 
 # Save the t-SNE output ---------------------------------------------------
 
