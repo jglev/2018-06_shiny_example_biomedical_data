@@ -192,8 +192,18 @@ shinyServer(function(input, output) {
       magrittr::extract2('Y')
   }
   
-  oneD_tsne_plot_points <- tsne_output %>% pull_tsne_points('tsne_1d')
-  twoD_tsne_plot_points <- tsne_output %>% pull_tsne_points('tsne_2d')
+  oneD_tsne_plot_points <- tsne_output %>% 
+    pull_tsne_points(
+      output_from_tsne = tsne_output,
+      column = 'tsne_1d',
+      row_numbers_to_keep = data_subset() %>% dplyr::pull(row_number)
+    )
+  twoD_tsne_plot_points <- tsne_output %>% 
+    pull_tsne_points(
+      output_from_tsne = tsne_output,
+      column = 'tsne_1d',
+      row_numbers_to_keep = data_subset() %>% dplyr::pull(row_number)
+    )
   
   output$tsne_2d_scatterplot <- renderPlot({
     twoD_tsne_plot_points %>% 
