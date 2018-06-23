@@ -16,6 +16,9 @@ check_packages('vegalite')
 ## This will load an object called dataset
 load(file.path('..', 'cache', 'cleaned_dataset.Rdata'))
 
+## This will load an object called tsne_output
+load(file.path('..', 'cache', 'tsne_output.Rdata'))
+
 ## Define server logic -----------------------------------------------------
 
 ## Define server-side logic
@@ -163,10 +166,43 @@ shinyServer(function(input, output) {
         ~ (.)
       )
   })
+
+  # Create t-SNE scatterplot ------------------------------------------------
+
+  pull_tsne_points <- function(
+    output_from_tsne = tsne_output,
+    column = 'tsne_1d',
+    source_values_to_keep = NULL,
+    row_numbers_to_keep = NULL
+  ) {
+    tsne_output %>% 
+      tibble::rowid_to_column('row_number') %>% 
+      purrr::when(
+        !is.null(source_values_to_keep) ~ (.) %>% 
+          dplyr::filter(source %in% source_values_to_keep),
+        ~ (.)
+      ) %>% 
+      purrr::when(
+        !is.null(row_numbers_to_keep) ~ (.) %>% 
+          dplyr::filter(row_number %in% row_numbers_to_keep),
+        ~ (.)
+      ) %>% 
+      dplyr::pull(!!as.name(column)) %>% 
+      magrittr::extract2(1) %>% 
+      magrittr::extract2('Y')
+  }
   
-  ## TODO: Get Vega working in Shiny.
-  output$scatterplot <- renderPlot({
-    data_subset() %>% ggplot(aes(wt, mpg)) + geom_point()
+  oneD_tsne_plot_points <- tsne_output %>% pull_tsne_points('tsne_1d')
+  twoD_tsne_plot_points <- tsne_output %>% pull_tsne_points('tsne_2d')
+  
+  output$tsne_2d_scatterplot <- renderPlot({
+    twoD_tsne_plot_points %>% 
+      as_tibble() %>% 
+      ggplot(aes(x = V1, y = V2)) + 
+      geom_point(size = 0.25)
+    
+    # data_subset() %>% ggplot(aes(wt, mpg)) + geom_point()
+    
     # vegalite::vegalite(
     #   export = TRUE,  # For
     #   renderer = 'svg'  # For png ('canvas') vs. svg ('svg') exporting
@@ -181,16 +217,16 @@ shinyServer(function(input, output) {
   plot_selection <- reactive({
     # Because it's a ggplot2, we don't need to supply xvar or yvar; if this
     # were a base graphics plot, we'd need those.
-    if (!is.null(input$scatterplot_brush)) {
+    if (!is.null(input$tsne_2d_scatterplot_brush)) {
       # message("Printing brush")
-      # message(input$scatterplot_brush)
-      brushedPoints(data_subset(), input$scatterplot_brush)
-    } else if (!is.null(input$scatterplot_click)) {
+      # message(input$tsne_2d_scatterplot_brush)
+      brushedPoints(data_subset(), input$tsne_2d_scatterplot_brush)
+    } else if (!is.null(input$tsne_2d_scatterplot_click)) {
       # message("Printing click")
-      # message(input$scatterplot_click)
+      # message(input$tsne_2d_scatterplot_click)
       near_points <- nearPoints(
         data_subset(),
-        input$scatterplot_click, 
+        input$tsne_2d_scatterplot_click, 
         addDist = TRUE
       )
       
@@ -213,7 +249,7 @@ shinyServer(function(input, output) {
   
   output$selection_histogram <- renderPlot({
     plot_selection() %>% 
-      ggplot(aes(x = wt)) +
+      ggplot(aes(x = noted_age)) +
       geom_histogram(bins = 50)
   })
   

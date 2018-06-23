@@ -33,18 +33,19 @@ shinyUI(fluidPage(
     mainPanel(
       fluidRow(
          plotOutput(
-           'scatterplot',
+           'tsne_2d_scatterplot',
            height = 300,
             # Equivalent to: click = clickOpts(id = 'plot_click')
-            click = 'scatterplot_click',
+            click = 'tsne_2d_scatterplot_click',
             brush = brushOpts(
-              id = 'scatterplot_brush'
+              id = 'tsne_2d_scatterplot_brush'
             )
          )
       ),
       fluidRow(
         h4('Selection'),
         DT::dataTableOutput('plot_selection'),
+        h5('Age at Date of Issue'),
         plotOutput(
           'selection_histogram', height = 300
         )
