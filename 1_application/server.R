@@ -102,13 +102,13 @@ shinyServer(function(input, output) {
         multiple = TRUE
       ),
       selectInput(
-        "ethnicities",
+        "ethnicity",
         label = "Ethnicity",
         choices = ethnicities,
         multiple = TRUE
       ),
       selectInput(
-        "icd9_generals",
+        "icd9_general",
         label = "ICD-9 General Category",
         choices = icd9_generals,
         multiple = TRUE
@@ -133,9 +133,35 @@ shinyServer(function(input, output) {
     )
   })
   
-  ## TODO: Flesh this out once UI elements are in place above.
+  filter_from_input <- function(lhs, input_name, column_to_filter) {
+    lhs %>% 
+      purrr::when(
+        length(input[[input_name]]) > 0 ~ (.) %>% 
+          dplyr::filter(
+            !!as.name(column_to_filter) %in% input[[input_name]]
+          ),
+        ~ (.)
+      )
+  }
+  
+  ## Get dataset matching rows:
   data_subset <- reactive({
-    dataset
+    dataset %>% 
+      tibble::rowid_to_column("row_number") %>% 
+      filter_from_input('cohort', 'source') %>% 
+      filter_from_input('sex', 'sex') %>% 
+      filter_from_input('race', 'race') %>% 
+      filter_from_input('ethnicity', 'ethnicity') %>% 
+      filter_from_input('icd9_general', 'icd9_general') %>% 
+      filter_from_input('resolved', 'resolved') %>% 
+      purrr::when(
+        length(input$noted_age) == 2 ~ (.) %>% 
+          dplyr::filter(
+            noted_age >= input$noted_age[1] &
+              noted_age <= input$noted_age[2]
+          ),
+        ~ (.)
+      )
   })
   
   ## TODO: Get Vega working in Shiny.

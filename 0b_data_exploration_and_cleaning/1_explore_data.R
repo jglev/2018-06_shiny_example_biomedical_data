@@ -9,7 +9,7 @@ check_packages('tidyverse')
 
 # Load dataset ------------------------------------------------------------
 
-load(file.path('..', 'cache', 'cleaned_dataset.Rdata'))
+load(file.path('cache', 'cleaned_dataset.Rdata'))
 
 dataset_for_development <- dataset %>% 
   ## Temporarily hard-coding a filter for development:
