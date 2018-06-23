@@ -4,6 +4,7 @@
 
 source(file.path('0a_helper_functions', 'check_packages.R'), local = TRUE)
 
+check_packages('broom')
 check_packages('ggplot2')
 check_packages('tidyverse')
 check_packages('Rtsne')
@@ -12,10 +13,6 @@ check_packages('vegalite')
 # Load dataset ------------------------------------------------------------
 
 load(file.path('cache', 'cleaned_dataset.Rdata'))
-
-dataset_for_development <- dataset %>% 
-  ## Temporarily hard-coding a filter for development:
-  filter(`source` == 'cohort1')
 
 # Implement t-sne ---------------------------------------------------------
 
@@ -32,63 +29,83 @@ dataset_for_development <- dataset %>%
 ## the RBloggers example indicates that it is fine with categorical data (in a
 ## wide matrix format).
 
-## Trying to compute one big matrix froze my computer, so I'm
-## cbinding individual model matricies instead:
+create_model_matrix <- function(filtered_dataset) {
+  ## Trying to compute one big matrix froze my computer, so I'm
+  ## cbinding individual model matricies instead:
+  c(
+    "sex",
+    "ethnicity",
+    "race",
+    "noted_age",
+    ## I'm using resolved rather than resolved_age, since the latter
+    ## includes so much missing data.
+    "resolved",
+    # "icd9_top",
+    "icd9_general"# ,
+    # "icd9_code"
+  ) %>% 
+    purrr::map_dfc(
+      function(x) {
+        filtered_dataset %>% 
+          ## Remove missing data, so that all returned columns are of
+          ## equal length:
+          na.omit() %>% 
+          ## Scale noted_age, following https://stats.stackexchange.com/a/218153,
+          ## which notes that scaling allows t-sne to treat all variables more
+          ## equally, rather than giving higher attention to larger-variance
+          ## variables:
+          dplyr::mutate(
+            noted_age = scale(noted_age, center = TRUE, scale = TRUE)
+          ) %>% 
+          model.matrix(formula(paste0('~ 0 + ', x)), .) %>% 
+          dplyr::as_tibble()
+      }
+    ) %>% as.matrix()
+}
 
-model_matrix <- c(
-  "sex",
-  "ethnicity",
-  "race",
-  "noted_age",
-  ## I'm using resolved rather than resolved_age, since the latter
-  ## includes so much missing data.
-  "resolved",
-  # "icd9_top",
-  "icd9_general"# ,
-  # "icd9_code"
-) %>% 
-  purrr::map_dfc(
-    function(x) {
-      dataset_for_development %>% 
-        ## Remove missing data, so that all returned columns are of
-        ## equal length:
-        na.omit() %>% 
-        ## Scale noted_age, following https://stats.stackexchange.com/a/218153,
-        ## which notes that scaling allows t-sne to treat all variables more
-        ## equally, rather than giving higher attention to larger-variance
-        ## variables:
-        dplyr::mutate(
-          noted_age = scale(noted_age, center = TRUE, scale = TRUE)
-        ) %>% 
-        model.matrix(formula(paste0('~ 0 + ', x)), .) %>% 
-        dplyr::as_tibble()
-    }
-  ) %>% as.matrix()
-# model_matrix %>% str()
+tsne_output <- dataset %>% 
+  dplyr::group_by(`source`) %>% 
+  dplyr::do(
+    model_matrix = create_model_matrix(.)
+  )
+# tsne_output
 
 # Implement t-SNE ---------------------------------------------------------
 
-## This follows https://www.r-bloggers.com/playing-with-dimensions-from-clustering-pca-t-sne-to-carl-sagan/
-set.seed(3)
-# system.time(
+run_tSNE <- function(model_matrix, number_of_dimensions = 2) {
+  ## This follows https://www.r-bloggers.com/playing-with-dimensions-from-clustering-pca-t-sne-to-carl-sagan/
+  set.seed(3)
   tsne_model <- Rtsne::Rtsne(
-    # model_matrix,
+    model_matrix,
       ## Take a sample for faster tsne development
-      model_matrix[sample(1:nrow(model_matrix), 500, replace = FALSE),],
+      # model_matrix[sample(1:nrow(model_matrix), 500, replace = FALSE),],
     theta = 0.8,
     pca = TRUE,
     check_duplicates = FALSE,  ## We've already deduplicated
     perplexity = 40,
-    dims = 2,
+    dims = number_of_dimensions,
     verbose = TRUE,
     ## For max_iter, default is 1000, but a test with the full dataset
     ## and verbose = TRUE showed error convergence after 700.
     max_iter = 1000
   )
-# )
-## Using just rows 1:1000 takes 42 seconds on my dev. laptop.
+  tsne_model
+  ## Using just rows 1:1000 takes 42 seconds on my dev. laptop.
+}
 
-# str(tsne_model)
+## Run the actual t-SNEs, with 1D and 2D output, for each cohort
+tsne_output %<>% 
+  dplyr::mutate(
+    tsne_1d = run_tSNE(model_matrix, number_of_dimensions = 1) %>% 
+      list(),
+    tsne_2d = run_tSNE(model_matrix, number_of_dimensions = 2) %>% 
+      list()
+  )
+
+# Save the t-SNE output ---------------------------------------------------
+
+save(tsne_output, file = file.path('cache', 'tsne_output.Rdata'))
+
 
 # Plot the output ---------------------------------------------------------
 
