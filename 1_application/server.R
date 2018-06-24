@@ -165,7 +165,8 @@ shinyServer(function(input, output) {
           ),
         ~ (.)
       )
-  })
+  }) %>% 
+  debounce(1000)  ## Wait X ms until updating, allowing more time for input
 
   # Create t-SNE scatterplot ------------------------------------------------
   
