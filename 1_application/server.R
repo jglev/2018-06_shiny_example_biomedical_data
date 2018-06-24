@@ -165,8 +165,6 @@ shinyServer(function(input, output) {
   })
 
   # Create t-SNE scatterplot ------------------------------------------------
-
-  
   
   output$tsne_2d_scatterplot <- renderPlot({
     req(input$cohort)
@@ -174,7 +172,14 @@ shinyServer(function(input, output) {
     dataset %>% 
       dplyr::filter(source == input$cohort) %>% 
       ggplot(aes(x = tsne_2d_v1, y = tsne_2d_v2)) + 
-      geom_point(size = 0.25) +
+      geom_point(size = 0.25, alpha = 0.01) +
+      geom_point(
+        data = data_subset(),
+        aes(x = tsne_2d_v1, y = tsne_2d_v2),
+        color = "#D01C65",
+        alpha = 0.75,
+        size = 0.25
+      ) +
       xlab('Factor 1') + 
       ylab('Factor 2')
     
