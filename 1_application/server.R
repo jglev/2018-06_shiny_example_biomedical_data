@@ -40,7 +40,7 @@ shinyServer(function(input, output) {
   # output$resample_slider <- renderUI({
   #   sliderInput(
   #     'sample_size',
-  #     label = "Sample Size",
+  #     label = 'Sample Size',
   #     min = resample_slider_min,
   #     max = resample_slider_max,
   #     ## Tests with tsne show that runs are *much* faster at n ~ 1000
@@ -80,48 +80,51 @@ shinyServer(function(input, output) {
   ethnicities <- get_levels('ethnicity')
   icd9_generals <- get_levels('icd9_general')
   
+  output$cohort_filter <- renderUI({
+    selectInput(
+      'cohort',
+      label = 'Cohort',
+      choices = cohorts,
+      selected = cohorts[1],
+      multiple = FALSE
+    )
+  })
+  
   output$filter_parameters <- renderUI({
     list(
       selectInput(
-        "cohort",
-        label = "Cohort",
-        choices = cohorts,
-        selected = cohorts[1],
-        multiple = FALSE
-      ),
-      selectInput(
-        "sex",
-        label = "Sex",
+        'sex',
+        label = 'Sex',
         choices = sexes,
         multiple = TRUE
       ),
       selectInput(
-        "race",
-        label = "Race",
+        'race',
+        label = 'Race',
         choices = races,
         multiple = TRUE
       ),
       selectInput(
-        "ethnicity",
-        label = "Ethnicity",
+        'ethnicity',
+        label = 'Ethnicity',
         choices = ethnicities,
         multiple = TRUE
       ),
       selectInput(
-        "icd9_general",
-        label = "ICD-9 General Category",
+        'icd9_general',
+        label = 'ICD-9 General Category',
         choices = icd9_generals,
         multiple = TRUE
       ),
       selectInput(
-        "resolved",
-        label = "Resolved",
-        choices = list("Yes" = TRUE, "No" = FALSE),
+        'resolved',
+        label = 'Resolved',
+        choices = list('Yes' = TRUE, 'No' = FALSE),
         multiple = TRUE
       ),
       sliderInput(
-        "noted_age",
-        label = "Age at Initial Incident Note",
+        'noted_age',
+        label = 'Age at Initial Incident Note',
         min = dataset %>% pull(noted_age) %>% min(),
         max = dataset %>% pull(noted_age) %>% max(),
         value = c(
@@ -147,7 +150,7 @@ shinyServer(function(input, output) {
   ## Get dataset matching rows:
   data_subset <- reactive({
     dataset %>% 
-      tibble::rowid_to_column("row_number") %>% 
+      tibble::rowid_to_column('row_number') %>% 
       filter_from_input('cohort', 'source') %>% 
       filter_from_input('sex', 'sex') %>% 
       filter_from_input('race', 'race') %>% 
@@ -176,8 +179,8 @@ shinyServer(function(input, output) {
       geom_point(
         data = data_subset(),
         aes(x = tsne_2d_v1, y = tsne_2d_v2),
-        color = "#D01C65",
-        alpha = 0.75,
+        color = '#D01C65',
+        alpha = 1.0,
         size = 0.25
       ) +
       xlab('Factor 1') + 
@@ -191,8 +194,8 @@ shinyServer(function(input, output) {
     # ) %>%
     #   cell_size(500, 300) %>%
     #   add_data(data_subset()) %>%
-    #   encode_x("wt", "quantitative") %>%
-    #   encode_y("mpg", "quantitative") %>%
+    #   encode_x('wt', 'quantitative') %>%
+    #   encode_y('mpg', 'quantitative') %>%
     #   mark_point()
   })
   
@@ -200,11 +203,11 @@ shinyServer(function(input, output) {
     # Because it's a ggplot2, we don't need to supply xvar or yvar; if this
     # were a base graphics plot, we'd need those.
     if (!is.null(input$tsne_2d_scatterplot_brush)) {
-      # message("Printing brush")
+      # message('Printing brush')
       # message(input$tsne_2d_scatterplot_brush)
       brushedPoints(data_subset(), input$tsne_2d_scatterplot_brush)
     } else if (!is.null(input$tsne_2d_scatterplot_click)) {
-      # message("Printing click")
+      # message('Printing click')
       # message(input$tsne_2d_scatterplot_click)
       near_points <- nearPoints(
         data_subset(),
@@ -226,14 +229,36 @@ shinyServer(function(input, output) {
   })
   
   output$plot_selection <- DT::renderDataTable({
-    plot_selection()
+    plot_selection() %>% 
+      select(
+        pat_id,
+        sex,
+        ethnicity,
+        race,
+        icd9_code,
+        icd9_general,
+        noted_age,
+        resolved_age,
+        resolved
+      ) %>% 
+      dplyr::rename(
+        `Patient ID` = pat_id,
+        `Sex` = sex,
+        `Ethnicity` = ethnicity,
+        `Race` = race,
+        `Age at Beginning of Issue` = noted_age,
+        `Age at Resolution of Issue` = resolved_age,
+        `Was Case Resolved?` = resolved,
+        `ICD-9 Code` = icd9_code,
+        `ICD-9 General Category` = icd9_general
+      )
   })
   
   output$selection_histogram <- renderPlot({
     plot_selection() %>% 
       ggplot(aes(x = noted_age)) +
       geom_histogram(bins = 50) + 
-      xlab('Noted Age at Beginning of Case') + 
+      xlab('Age in Days') + 
       ylab('Number of Cases')
   })
   

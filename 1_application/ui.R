@@ -18,9 +18,9 @@ shinyUI(fluidPage(
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
     sidebarPanel(
-      h3('Status Messages (TODO)'),
-      textOutput('status_output'),
-      h3('Highlight Datapoints'),
+      h2('Cohort'),
+      uiOutput('cohort_filter'),
+      h2('Highlight Datapoints'),
       uiOutput('filter_parameters')
       # actionButton(
       #   'resample_button',
@@ -43,9 +43,9 @@ shinyUI(fluidPage(
          )
       ),
       fluidRow(
-        h4('Selection'),
+        h3('Selection'),
         DT::dataTableOutput('plot_selection'),
-        h5('Age at Date of Issue'),
+        h4('Age at Beginning of Case'),
         plotOutput(
           'selection_histogram', height = 300
         )
