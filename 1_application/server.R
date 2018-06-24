@@ -16,9 +16,6 @@ check_packages('vegalite')
 ## This will load an object called dataset
 load(file.path('..', 'cache', 'cleaned_dataset.Rdata'))
 
-## This will load an object called tsne_output
-load(file.path('..', 'cache', 'tsne_output.Rdata'))
-
 ## Define server logic -----------------------------------------------------
 
 ## Define server-side logic
@@ -172,9 +169,11 @@ shinyServer(function(input, output) {
   
   
   output$tsne_2d_scatterplot <- renderPlot({
-    twoD_tsne_plot_points %>% 
-      as_tibble() %>% 
-      ggplot(aes(x = V1, y = V2)) + 
+    req(input$cohort)
+    
+    dataset %>% 
+      dplyr::filter(source == input$cohort) %>% 
+      ggplot(aes(x = tsne_2d_v1, y = tsne_2d_v2)) + 
       geom_point(size = 0.25)
     
     # data_subset() %>% ggplot(aes(wt, mpg)) + geom_point()

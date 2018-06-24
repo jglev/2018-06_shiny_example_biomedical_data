@@ -10,32 +10,26 @@ check_packages('vegalite')
 
 # Load dataset ------------------------------------------------------------
 
-load(file.path('cache', 'tsne_output.Rdata'))
+load(file.path('cache', 'dataset.Rdata'))
 
 # Plot the output ---------------------------------------------------------
 
-pull_tsne_points <- function(
-  output_from_tsne = tsne_output,
-  column = 'tsne_1d'
-) {
-  tsne_output %>% 
-    dplyr::filter(source == 'cohort1') %>% 
-    dplyr::pull(!!as.name(column)) %>% 
-    magrittr::extract2(1) %>% 
-    magrittr::extract2('Y')
-}
-
-oneD_tsne_plot_points <- tsne_output %>% pull_tsne_points('tsne_1d')
-twoD_tsne_plot_points <- tsne_output %>% pull_tsne_points('tsne_2d')
-
-twoD_tsne_plot_points %>% 
-  as_tibble() %>% 
-  ggplot(aes(x = V1, y = V2)) + 
+dataset %>% 
+  dplyr::filter(source == 'cohort1') %>% 
+  ggplot(aes(x = tsne_2d_v1, y = tsne_2d_v2)) + 
   geom_point(size = 0.25)
 
-oneD_tsne_plot_points %>%
-  as_tibble() %>%
-  ggplot(aes(x = V1, y = 0)) +
+# ## TODO Enhancement: For ease of looking, split the dense 1D line into sections:
+# tsne_1d_row_numbers <- dataset %>% 
+#   dplyr::filter(source == 'cohort1') %>% 
+#   select(tsne_1d_v1) %>% 
+#   tibble::rowid_to_column('row_number') %>% 
+#   na.omit() %>% 
+#   pull(row_number)
+
+dataset %>% 
+  dplyr::filter(source == 'cohort1') %>%
+  ggplot(aes(x = tsne_1d_v1, y = 0)) +
   geom_point(size = 0.25)
 
 # Explore implementation in Vega ------------------------------------------
