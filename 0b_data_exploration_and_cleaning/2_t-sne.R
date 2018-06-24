@@ -130,32 +130,11 @@ pull_tsne_points <- function(
     magrittr::extract2('Y')
 }
 
-oneD_tsne_plot_points <- tsne_output %>% 
-  pull_tsne_points(
-    column = 'tsne_1d',
-    cohort_values_to_keep = 'cohort1'
-  ) %>% 
-  as.tibble() %>% 
-  dplyr::rename(
-    tsne_1d_v1 = V1
-  )
-twoD_tsne_plot_points <- tsne_output %>% 
-  pull_tsne_points(
-    column = 'tsne_2d',
-    cohort_values_to_keep = 'cohort1'
-  ) %>% 
-  as.tibble() %>% 
-  dplyr::rename(
-    tsne_2d_v1 = V1,
-    tsne_2d_v2 = V2
-  )
-
-row_numbers_to_join_tsne_data_to <- dataset %>% 
-  tibble::rowid_to_column('row_number') %>% 
-  dplyr::select_at(c('row_number', column_names_for_model_matrix)) %>% 
-  na.omit() %>% 
-  dplyr::filter(source == 'cohort1') %>%
-  dplyr::pull(row_number)
+## I'm using a for loop here rather than a tidyverse analog (such as
+## map() or walk(), because doing so seems more conceptually straightforward
+## to me in this case. We need to join the tsne output back up
+## cohort-by-cohort to the original dataset.
+## This could also likely be accomplished with a join operation.
 
 ## Create blank columns, which we will fill in below:
 dataset %<>% 
@@ -165,14 +144,51 @@ dataset %<>%
     tsne_2d_v2 = NA
   )
 
-dataset[row_numbers_to_join_tsne_data_to,c(
-  'tsne_1d_v1',
-  'tsne_2d_v1',
-  'tsne_2d_v2'
-)] <- dplyr::bind_cols(
-  oneD_tsne_plot_points,
-  twoD_tsne_plot_points
-)
+cohort_names <- dataset %>% 
+  dplyr::select(source) %>% 
+  dplyr::distinct() %>% 
+  dplyr::pull() %>% 
+  as.character()
+
+for (cohort_name in cohort_names) {
+  oneD_tsne_plot_points <- tsne_output %>% 
+    pull_tsne_points(
+      column = 'tsne_1d',
+      cohort_values_to_keep = cohort_name
+    ) %>% 
+    as.tibble() %>% 
+    dplyr::rename(
+      tsne_1d_v1 = V1
+    )
+  twoD_tsne_plot_points <- tsne_output %>% 
+    pull_tsne_points(
+      column = 'tsne_2d',
+      cohort_values_to_keep = cohort_name
+    ) %>% 
+    as.tibble() %>% 
+    dplyr::rename(
+      tsne_2d_v1 = V1,
+      tsne_2d_v2 = V2
+    )
+  
+  row_numbers_to_join_tsne_data_to <- dataset %>% 
+    tibble::rowid_to_column('row_number') %>% 
+    dplyr::select_at(c('row_number', column_names_for_model_matrix)) %>% 
+    na.omit() %>% 
+    dplyr::filter(source == cohort_name) %>%
+    dplyr::pull(row_number)
+  
+  dataset[row_numbers_to_join_tsne_data_to,c(
+    'tsne_1d_v1',
+    'tsne_2d_v1',
+    'tsne_2d_v2'
+  )] <- dplyr::bind_cols(
+    oneD_tsne_plot_points,
+    twoD_tsne_plot_points
+  )
+}
+
+# dataset %>% head(100) %>% View()
 
 # Save the t-SNE output ---------------------------------------------------
 
