@@ -255,14 +255,49 @@ shinyServer(function(input, output) {
       )
   })
   
-  output$selection_histogram <- renderPlot({
-    plot_selection() %>% 
-      ggplot(aes(x = noted_age)) +
-      geom_histogram(bins = 50) + 
-      xlab('Age in Days') + 
-      ylab('Number of Cases')
+  output$selection_age_histogram <- renderPlot({
+    plot_selection() %>%
+    ggplot(aes(x = noted_age)) +
+    geom_histogram(bins = 50) +
+    xlab('Age in Days') +
+    ylab('Number of Cases')
+    # renderVegalite({
+      # vegalite::vegalite(
+      #   export = TRUE,  # For
+      #   renderer = 'canvas'  # For png ('canvas') vs. svg ('svg') exporting
+      # ) %>%
+      #   cell_size(800, 400) %>%
+      #   add_data(data_subset()) %>%
+      #   encode_x("noted_age", "quantitative") %>%
+      #   axis_y(title = "Age in Days", grid = FALSE) %>%
+      #   encode_y("*", "quantitative", aggregate = "count") %>%
+      #   bin_x(maxbins = 50) %>%
+      #   mark_bar()
+    })
+  
+  output$selection_race_chart <- renderPlot({
+    plot_selection() %>%
+      ggplot(aes(x = race)) +
+      geom_bar() +
+      xlab('Race') +
+      ylab('Number of Cases') + 
+      coord_flip()
+    # renderVegalite({
+      # vegalite::vegalite(
+      #   export = TRUE,  # For
+      #   renderer = 'canvas'  # For png ('canvas') vs. svg ('svg') exporting
+      # ) %>%
+      #   cell_size(800, 400) %>%
+      #   add_data(data_subset()) %>%
+      #   encode_x("race", "quantitative") %>%
+      #   axis_y(title = "Race", grid = TRUE) %>%
+      #   axis_y(title = "Age in Days", grid = FALSE) %>%
+      #   encode_y("*", "quantitative", aggregate = "count") %>%
+      #   mark_bar()
   })
   
   ## TODO: Implement multi-tiered flowing visualization
+  
+  
   
 })

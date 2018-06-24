@@ -47,8 +47,20 @@ shinyUI(fluidPage(
         DT::dataTableOutput('plot_selection'),
         h4('Age at Beginning of Case'),
         plotOutput(
-          'selection_histogram', height = 300
+          'selection_age_histogram',
+          height = 500
+        ),
+        # vegaliteOutput(
+        #   'selection_age_histogram'
+        # ),
+        h4('Race'),
+        plotOutput(
+          'selection_race_chart',
+          height = 500
         )
+        # vegaliteOutput(
+        #   'selection_race_chart'
+        # )
       )
     )
   )
