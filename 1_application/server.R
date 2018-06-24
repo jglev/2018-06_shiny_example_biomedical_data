@@ -174,7 +174,9 @@ shinyServer(function(input, output) {
     dataset %>% 
       dplyr::filter(source == input$cohort) %>% 
       ggplot(aes(x = tsne_2d_v1, y = tsne_2d_v2)) + 
-      geom_point(size = 0.25)
+      geom_point(size = 0.25) +
+      xlab('Factor 1') + 
+      ylab('Factor 2')
     
     # data_subset() %>% ggplot(aes(wt, mpg)) + geom_point()
     
@@ -225,7 +227,9 @@ shinyServer(function(input, output) {
   output$selection_histogram <- renderPlot({
     plot_selection() %>% 
       ggplot(aes(x = noted_age)) +
-      geom_histogram(bins = 50)
+      geom_histogram(bins = 50) + 
+      xlab('Noted Age at Beginning of Case') + 
+      ylab('Number of Cases')
   })
   
   ## TODO: Implement multi-tiered flowing visualization
