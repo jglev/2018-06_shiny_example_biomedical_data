@@ -192,4 +192,8 @@ for (cohort_name in cohort_names) {
 
 # Save the t-SNE output ---------------------------------------------------
 
+## Save the tsne output, since it took so long to run, in case we
+## want it again in the future:
 save(tsne_output, file = file.path('cache', 'tsne_output.Rdata'))
+## Overwrite the saved dataset with the updated data:
+save(dataset, file = file.path('cache', 'cleaned_dataset.Rdata'))
