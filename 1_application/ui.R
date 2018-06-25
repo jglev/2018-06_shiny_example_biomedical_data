@@ -17,6 +17,7 @@ shinyUI(fluidPage(
   # Sidebar with a slider input for number of bins 
   navbarPage("Cohort Explorer",  # Application title
     tabPanel("Instructions",
+      p(textOutput('introduction_to_dataset')),
       h1("Instructions for Use"),
       p("These are instructions for use."),
       h2("t-SNE"),

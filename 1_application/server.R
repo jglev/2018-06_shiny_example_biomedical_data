@@ -73,6 +73,27 @@ shinyServer(function(input, output) {
   #   resample_data(input$sample_size)
   # })
   
+  # Render general information about the dataset ----------------------------
+  
+  output$introduction_to_dataset <- renderText({
+    paste0(
+      'This interface allows exploring data on ',
+      dataset %>% 
+        select(source) %>% 
+        distinct() %>% 
+        nrow() %>% 
+        scales::comma(),
+      ' cohorts, comprising ',
+      dataset %>% nrow() %>% scales::comma(),
+      ' total cases across ',
+      dataset %>% select(pat_id) %>% 
+        distinct() %>% 
+        nrow() %>% 
+        scales::comma(),
+      ' individual patients.'
+    )
+  })
+  
   output$cohort_header <- renderText({
     req(input$cohort)
     
