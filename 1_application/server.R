@@ -160,6 +160,7 @@ shinyServer(function(input, output) {
   data_subset <- reactive({
     
     dataset %>% 
+      dplyr::filter(!is.na(tsne_2d_v1) & !is.na(tsne_2d_v2)) %>% 
       tibble::rowid_to_column('row_number') %>% 
       filter_from_input('cohort', 'source') %>% 
       filter_from_input('sex', 'sex') %>% 
@@ -232,7 +233,7 @@ shinyServer(function(input, output) {
       
       ## If a click is not near a point, show all points. Otherwise,
       ## show just the selected point(s).
-      if (nrow(near_points) > 0) {
+      if (nrow(near_points) > 1) {
         near_points
       } else {
         data_subset()
@@ -331,7 +332,8 @@ shinyServer(function(input, output) {
       #   mark_bar()
   })
   
-  ## Implement multi-tiered flowing (Sankey / Alluvial) visualization
+  # Implement multi-tiered flowing (Sankey / Alluvial) visualization -------
+  
   output$sankey_diagram <- renderPlot({
     dataset_alluvial <- plot_selection() %>% 
       dplyr::select(sex, race, resolved) %>% 
@@ -343,20 +345,38 @@ shinyServer(function(input, output) {
         sex = as.character(sex) %>% tidyr::replace_na('(Not recorded)'),
         race = as.character(race) %>% tidyr::replace_na('(Not recorded)'),
         # ethnicity = as.character(ethnicity) %>% tidyr::replace_na('(Not recorded)'),
+        # resolved = as.character(resolved) %>% tidyr::replace_na('(Unknown)'),
         color = if_else(resolved == TRUE, 'green', 'red'),
         # color = 'cadetblue2'  ## The closest I could find to CHOP's logo's color : )
-        resolved = if_else(resolved == TRUE, 'Yes', 'No'),
+        resolved = if_else(resolved == TRUE, 'Yes', 'No')
       )
+    
+    if (dataset_alluvial %>% nrow() > 0) {
+      if (dataset_alluvial %>% nrow() == 1) {
+        ## Add a dummy row to the dataset, to avoid an
+        ## "incorrect number of dimensions" error, if there is only
+        ## one row in the dataset selection.
+        dataset_alluvial %<>% 
+          dplyr::bind_rows(tibble(
+            sex = c(''),
+            race = c(''),
+            n = c(0),
+            color = c('black')
+          ))
+      }
       
-    alluvial(
-      dataset_alluvial %>% select(sex, race),
-      freq = dataset_alluvial$n,
-      col = dataset_alluvial$color,
-      cex = 1.0
-    )
+      alluvial(
+        dataset_alluvial %>% 
+        select(sex, race),
+        freq = dataset_alluvial$n,
+        col = dataset_alluvial$color,
+        cex = 1.0
+      )
+    } else {
+      NULL
+    }
   })
   
-
   # Define cohort comparison charts -----------------------------------------
 
   create_faceted_bar_plot <- function(categorical_variable) {
