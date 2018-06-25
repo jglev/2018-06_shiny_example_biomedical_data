@@ -15,15 +15,28 @@ shinyUI(fluidPage(
   useShinyjs(),  ## See, e.g., https://ox-it.github.io/OxfordIDN_Shiny-App-Templates/advanced-shiny-features/loading-data/
   
   # Sidebar with a slider input for number of bins 
-  navbarPage("Cohort Explorer",  # Application title
-    tabPanel("Instructions",
+  navbarPage('Cohort Explorer',  # Application title
+    tabPanel('Instructions',
       p(textOutput('introduction_to_dataset')),
-      h1("Instructions for Use"),
-      p("These are instructions for use."),
-      h2("t-SNE"),
-      p("The top of the tab uses a visualization method called t-SNE.")
+      h1('Instructions for Use'),
+      p(
+        'This page has two tabs for data analysis.',
+        'The', tags$b('Explore'), 'tab is for understanding each cohort',
+        tags$b('individually.'), 'The', tags$b('Cohort Comparison'), 'tab is',
+        'for understanding the', tags$b('relationship between cohorts.')
+      ),
+      h2('The Explore tab'),
+      h3('t-SNE'),
+      p('The top of the tab uses a visualization method called t-SNE.'),
+      h2('The Cohort Comparison tab'),
+      p(
+        'The Cohort Comparison tab presents a series of stacked bar charts,',
+        'one for each of the categorical variables present in the dataset.',
+        'You can scroll down through the tab to compare cohorts on each of',
+        'these categorical variables.'
+      )
     ),
-    tabPanel("Explore",
+    tabPanel('Explore',
       sidebarLayout(
         sidebarPanel(
           h2('Cohort'),
@@ -42,9 +55,9 @@ shinyUI(fluidPage(
           h1(textOutput('cohort_header')),
           fluidRow(
             div(
-              id = "loading_content",
-              class = "loading-content",
-              h2(class = "animated infinite pulse", "Loading data...")
+              id = 'loading_content',
+              class = 'loading-content',
+              h2(class = 'animated infinite pulse', 'Loading data...')
             ),
             plotOutput(
               'tsne_2d_scatterplot',
@@ -85,7 +98,7 @@ shinyUI(fluidPage(
         )
       )
     ),
-    tabPanel("Cohort Comparison",
+    tabPanel('Cohort Comparison',
       h1('Cohort Comparison, by Categorical Variables'),
       uiOutput('cohort_comparison_charts')
     )
