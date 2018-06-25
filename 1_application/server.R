@@ -275,11 +275,11 @@ shinyServer(function(input, output) {
       #   mark_bar()
     })
   
-  output$selection_race_chart <- renderPlot({
+  output$selection_icd9_top_chart <- renderPlot({
     plot_selection() %>%
-      ggplot(aes(x = race)) +
+      ggplot(aes(x = icd9_top)) +
       geom_bar() +
-      xlab('Race') +
+      xlab('ICD-9 First Digit/Letter') +
       ylab('Number of Cases') + 
       coord_flip()
     # renderVegalite({
@@ -296,8 +296,29 @@ shinyServer(function(input, output) {
       #   mark_bar()
   })
   
-  ## TODO: Implement multi-tiered flowing visualization
-  
-  
+  ## Implement multi-tiered flowing (Sankey / Alluvial) visualization
+  output$sankey_diagram <- renderPlot({
+    dataset_alluvial <- dataset %>% 
+      dplyr::select(sex, race, resolved) %>% 
+      dplyr::group_by(sex, race, resolved) %>% 
+      dplyr::summarize(n = n()) %>% 
+      # dplyr::mutate(frequency = n / sum(n)) %>% 
+      ungroup() %>% 
+      dplyr::mutate(
+        sex = as.character(sex) %>% tidyr::replace_na('(Not recorded)'),
+        race = as.character(race) %>% tidyr::replace_na('(Not recorded)'),
+        # ethnicity = as.character(ethnicity) %>% tidyr::replace_na('(Not recorded)'),
+        color = if_else(resolved == TRUE, 'green', 'red'),
+        # color = 'cadetblue2'  ## The closest I could find to CHOP's logo's color : )
+        resolved = if_else(resolved == TRUE, 'Yes', 'No'),
+      )
+      
+    alluvial(
+      dataset_alluvial %>% select(sex, race),
+      freq = dataset_alluvial$n,
+      col = dataset_alluvial$color,
+      cex = 1.0
+    )
+  })
   
 })

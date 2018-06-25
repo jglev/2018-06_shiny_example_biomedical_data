@@ -55,12 +55,16 @@ shinyUI(fluidPage(
         # ),
         h4('Race'),
         plotOutput(
-          'selection_race_chart',
+          'selection_icd9_top_chart',
           height = 500
-        )
+        ),
         # vegaliteOutput(
         #   'selection_race_chart'
         # )
+        plotOutput(
+          'sankey_diagram',
+          height = 1500
+        )
       )
     )
   )
