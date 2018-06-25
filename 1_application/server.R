@@ -6,9 +6,11 @@
 
 source(file.path('..', '0a_helper_functions', 'check_packages.R'), local = TRUE)
 
+check_packages('alluvial')
 check_packages('DT')
 check_packages('ggplot2')
 check_packages('shiny')
+check_packages('shinyjs')
 check_packages('vegalite')
 
 # Load data ---------------------------------------------------------------
@@ -149,6 +151,7 @@ shinyServer(function(input, output) {
   
   ## Get dataset matching rows:
   data_subset <- reactive({
+    
     dataset %>% 
       tibble::rowid_to_column('row_number') %>% 
       filter_from_input('cohort', 'source') %>% 
@@ -166,14 +169,16 @@ shinyServer(function(input, output) {
         ~ (.)
       )
   }) %>% 
-  debounce(1000)  ## Wait X ms until updating, allowing more time for input
+  debounce(1500)  ## Wait X ms until updating, allowing more time for input
 
   # Create t-SNE scatterplot ------------------------------------------------
   
   output$tsne_2d_scatterplot <- renderPlot({
+    show("loading_content")  ## Show the loading notice
+    
     req(input$cohort)
     
-    dataset %>% 
+    vis <- dataset %>% 
       dplyr::filter(source == input$cohort) %>% 
       ggplot(aes(x = tsne_2d_v1, y = tsne_2d_v2)) + 
       geom_point(size = 0.25, alpha = 0.01) +
@@ -187,8 +192,6 @@ shinyServer(function(input, output) {
       xlab('Factor 1') + 
       ylab('Factor 2')
     
-    # data_subset() %>% ggplot(aes(wt, mpg)) + geom_point()
-    
     # vegalite::vegalite(
     #   export = TRUE,  # For
     #   renderer = 'svg'  # For png ('canvas') vs. svg ('svg') exporting
@@ -198,6 +201,10 @@ shinyServer(function(input, output) {
     #   encode_x('wt', 'quantitative') %>%
     #   encode_y('mpg', 'quantitative') %>%
     #   mark_point()
+    
+    hide("loading_content")  ## Hide the loading notice
+    
+    vis
   })
   
   plot_selection <- reactive({
@@ -237,7 +244,7 @@ shinyServer(function(input, output) {
         ethnicity,
         race,
         icd9_code,
-        icd9_general,
+        # icd9_general,
         noted_age,
         resolved_age,
         resolved
@@ -250,8 +257,8 @@ shinyServer(function(input, output) {
         `Age at Beginning of Issue` = noted_age,
         `Age at Resolution of Issue` = resolved_age,
         `Was Case Resolved?` = resolved,
-        `ICD-9 Code` = icd9_code,
-        `ICD-9 General Category` = icd9_general
+        `ICD-9 Code` = icd9_code
+        # `ICD-9 General Category` = icd9_general
       )
   })
   
@@ -298,7 +305,7 @@ shinyServer(function(input, output) {
   
   ## Implement multi-tiered flowing (Sankey / Alluvial) visualization
   output$sankey_diagram <- renderPlot({
-    dataset_alluvial <- dataset %>% 
+    dataset_alluvial <- data_subset() %>% 
       dplyr::select(sex, race, resolved) %>% 
       dplyr::group_by(sex, race, resolved) %>% 
       dplyr::summarize(n = n()) %>% 

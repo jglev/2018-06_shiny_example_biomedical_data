@@ -7,10 +7,12 @@
 source(file.path('..', '0a_helper_functions', 'check_packages.R'), local = TRUE)
 
 check_packages('shiny')
+check_packages('shinyjs')
 
 ## Define UI ---------------------------------------------------------------
 
 shinyUI(fluidPage(
+  useShinyjs(),  ## See, e.g., https://ox-it.github.io/OxfordIDN_Shiny-App-Templates/advanced-shiny-features/loading-data/
   
   # Application title
   titlePanel('Cohort Overview'),
@@ -32,20 +34,25 @@ shinyUI(fluidPage(
     
     mainPanel(
       fluidRow(
-         plotOutput(
-           'tsne_2d_scatterplot',
-           height = 300,
-            # Equivalent to: click = clickOpts(id = 'plot_click')
-            click = 'tsne_2d_scatterplot_click',
-            brush = brushOpts(
-              id = 'tsne_2d_scatterplot_brush'
-            )
-         )
+        div(
+          id = "loading_content",
+          class = "loading-content",
+          h2(class = "animated infinite pulse", "Loading data...")
+        ),
+        plotOutput(
+          'tsne_2d_scatterplot',
+          height = 800,
+          # Equivalent to: click = clickOpts(id = 'plot_click')
+          click = 'tsne_2d_scatterplot_click',
+          brush = brushOpts(
+            id = 'tsne_2d_scatterplot_brush'
+          )
+        )
       ),
       fluidRow(
-        h3('Selection'),
+        h2('Selection'),
         DT::dataTableOutput('plot_selection'),
-        h4('Age at Beginning of Case'),
+        h3('Age at Beginning of Case'),
         plotOutput(
           'selection_age_histogram',
           height = 500
@@ -53,7 +60,7 @@ shinyUI(fluidPage(
         # vegaliteOutput(
         #   'selection_age_histogram'
         # ),
-        h4('Race'),
+        h3('ICD-9 Diagnosis Top Level (First Digit / Letter)'),
         plotOutput(
           'selection_icd9_top_chart',
           height = 500
@@ -61,6 +68,7 @@ shinyUI(fluidPage(
         # vegaliteOutput(
         #   'selection_race_chart'
         # )
+        h3('Resolved (Green) vs. Unresolved (Red) Cases, by Sex and Race'),
         plotOutput(
           'sankey_diagram',
           height = 1500
