@@ -67,5 +67,3 @@ vega_spec %>% jsonlite::toJSON(auto_unbox = TRUE) %>% clipr::write_clip()
 #   as_tibble() %>% 
 #   ggplot(aes(x = V1, y = 0)) + 
 #   geom_point(size = 0.25)
-
-

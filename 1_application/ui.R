@@ -79,6 +79,10 @@ shinyUI(fluidPage(
             )
           )
         ),
+        tabPanel("Cohort Comparison",
+          h1('Cohort Comparison, by Categorical Variables'),
+          uiOutput('cohort_comparison_charts')
+        ),
         tabPanel("Instructions",
           h1("Instructions for Use"),
           p("These are instructions for use."),

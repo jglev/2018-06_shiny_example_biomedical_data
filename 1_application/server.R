@@ -356,4 +356,29 @@ shinyServer(function(input, output) {
     )
   })
   
+
+  # Define cohort comparison charts -----------------------------------------
+
+  create_faceted_bar_plot <- function(categorical_variable) {
+    dataset %>% 
+      ggplot(aes_string(x = 'source', fill = categorical_variable)) +
+      geom_bar(position = 'fill') +
+      scale_y_continuous(labels = scales::percent)
+  }
+  
+  output$cohort_comparison_charts <- renderUI({
+    list(
+      h4('Sex'),
+      renderPlot(create_faceted_bar_plot('sex')),
+      h4('Race'),
+      renderPlot(create_faceted_bar_plot('race')),
+      h4('Ethnicity'),
+      renderPlot(create_faceted_bar_plot('ethnicity')),
+      h4('ICD-9 Diagnosis First Digit / Letter'),
+      renderPlot(create_faceted_bar_plot('icd9_top')),
+      h4('Was the Case Resolved?'),
+      renderPlot(create_faceted_bar_plot('resolved'))
+    )
+  })
+  
 })
