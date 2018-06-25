@@ -15,7 +15,7 @@ shinyUI(fluidPage(
   useShinyjs(),  ## See, e.g., https://ox-it.github.io/OxfordIDN_Shiny-App-Templates/advanced-shiny-features/loading-data/
   
   # Sidebar with a slider input for number of bins 
-  navbarPage("Cohort Overview",  # Application title
+  navbarPage(div(img(src = "https://www.chop.edu/sites/all/themes/chop/images/chop-logo-nav.svg", height = 25)),  # Application title
     tabPanel("Explore",
       sidebarLayout(
         sidebarPanel(
