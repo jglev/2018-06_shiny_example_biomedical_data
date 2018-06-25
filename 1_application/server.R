@@ -11,6 +11,7 @@ check_packages('DT')
 check_packages('ggplot2')
 check_packages('shiny')
 check_packages('shinyjs')
+check_packages('tidyverse')
 check_packages('vegalite')
 
 # Load data ---------------------------------------------------------------
@@ -71,6 +72,12 @@ shinyServer(function(input, output) {
   #   req(input$sample_size)
   #   resample_data(input$sample_size)
   # })
+  
+  output$cohort_header <- renderText({
+    req(input$cohort)
+    
+    paste0("Cohort: ", input$cohort)
+  })
   
   get_levels <- function(column_name) {
     dataset %>% pull(!!as.name(column_name)) %>% levels()

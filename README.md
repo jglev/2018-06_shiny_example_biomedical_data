@@ -8,11 +8,12 @@ Create a web page that both summarizes the composition of and highlights the out
 
 ## Desired Elements
 
-- [ ] Dynamic web page that lays out the various components in a clean and easy to follow manner
-- [ ] Have a header that includes the name of the cohort and placeholder for other descriptors or metadata
-- [ ] Include at least 2 meaningful visuals using Vega (https://vega.github.io/vega/)
-- [ ] Summary tables and other sections can be used to highlight certain points
-- [ ] Have a section or callout to outliers
+- [X] Dynamic web page that lays out the various components in a clean and easy to follow manner
+- [X] Have a header that includes the name of the cohort and placeholder for other descriptors or metadata
+- [O] Include at least 2 meaningful visuals using Vega (https://vega.github.io/vega/)
+- [X] Summary tables and other sections can be used to highlight certain points
+- [ ] Have a section or callout to outliers  
+    (The t-SNE output is intended as this. Age-SD-based-outlier detection could also be implemented in the Age scatterplot, but that could be a further step in a project like this.)
 	- [ ] Include the reason why it is an outlier based on the method used
 	- [ ] For example, a value is 3 times the stdev of the other points
 - [ ] Web server component (any language) that serves up the data dynamically to power the page

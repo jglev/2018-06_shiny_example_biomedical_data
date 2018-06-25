@@ -33,45 +33,56 @@ shinyUI(fluidPage(
     ),
     
     mainPanel(
-      fluidRow(
-        div(
-          id = "loading_content",
-          class = "loading-content",
-          h2(class = "animated infinite pulse", "Loading data...")
-        ),
-        plotOutput(
-          'tsne_2d_scatterplot',
-          height = 800,
-          # Equivalent to: click = clickOpts(id = 'plot_click')
-          click = 'tsne_2d_scatterplot_click',
-          brush = brushOpts(
-            id = 'tsne_2d_scatterplot_brush'
+      tabsetPanel(
+        tabPanel("Explore",
+          h1(textOutput('cohort_header')),
+          fluidRow(
+            div(
+              id = "loading_content",
+              class = "loading-content",
+              h2(class = "animated infinite pulse", "Loading data...")
+            ),
+            plotOutput(
+              'tsne_2d_scatterplot',
+              height = 800,
+              # Equivalent to: click = clickOpts(id = 'plot_click')
+              click = 'tsne_2d_scatterplot_click',
+              brush = brushOpts(
+                id = 'tsne_2d_scatterplot_brush'
+              )
+            )
+          ),
+          fluidRow(
+            h2('Selection'),
+            DT::dataTableOutput('plot_selection'),
+            h3('Age at Beginning of Case'),
+            plotOutput(
+              'selection_age_histogram',
+              height = 500
+            ),
+            # vegaliteOutput(
+            #   'selection_age_histogram'
+            # ),
+            h3('ICD-9 Diagnosis Top Level (First Digit / Letter)'),
+            plotOutput(
+              'selection_icd9_top_chart',
+              height = 500
+            ),
+            # vegaliteOutput(
+            #   'selection_race_chart'
+            # )
+            h3('Resolved (Green) vs. Unresolved (Red) Cases, by Sex and Race'),
+            plotOutput(
+              'sankey_diagram',
+              height = 1500
+            )
           )
-        )
-      ),
-      fluidRow(
-        h2('Selection'),
-        DT::dataTableOutput('plot_selection'),
-        h3('Age at Beginning of Case'),
-        plotOutput(
-          'selection_age_histogram',
-          height = 500
         ),
-        # vegaliteOutput(
-        #   'selection_age_histogram'
-        # ),
-        h3('ICD-9 Diagnosis Top Level (First Digit / Letter)'),
-        plotOutput(
-          'selection_icd9_top_chart',
-          height = 500
-        ),
-        # vegaliteOutput(
-        #   'selection_race_chart'
-        # )
-        h3('Resolved (Green) vs. Unresolved (Red) Cases, by Sex and Race'),
-        plotOutput(
-          'sankey_diagram',
-          height = 1500
+        tabPanel("Instructions",
+          h1("Instructions for Use"),
+          p("These are instructions for use."),
+          h2("t-SNE"),
+          p("The top of the tab uses a visualization method called t-SNE.")
         )
       )
     )
