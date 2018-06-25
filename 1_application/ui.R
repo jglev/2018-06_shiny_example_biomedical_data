@@ -16,6 +16,12 @@ shinyUI(fluidPage(
   
   # Sidebar with a slider input for number of bins 
   navbarPage(div(img(src = "https://www.chop.edu/sites/all/themes/chop/images/chop-logo-nav.svg", height = 25)),  # Application title
+    tabPanel("Instructions",
+      h1("Instructions for Use"),
+      p("These are instructions for use."),
+      h2("t-SNE"),
+      p("The top of the tab uses a visualization method called t-SNE.")
+    ),
     tabPanel("Explore",
       sidebarLayout(
         sidebarPanel(
@@ -81,12 +87,6 @@ shinyUI(fluidPage(
     tabPanel("Cohort Comparison",
       h1('Cohort Comparison, by Categorical Variables'),
       uiOutput('cohort_comparison_charts')
-    ),
-    tabPanel("Instructions",
-      h1("Instructions for Use"),
-      p("These are instructions for use."),
-      h2("t-SNE"),
-      p("The top of the tab uses a visualization method called t-SNE.")
     )
   )
 ))
