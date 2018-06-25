@@ -14,27 +14,24 @@ check_packages('shinyjs')
 shinyUI(fluidPage(
   useShinyjs(),  ## See, e.g., https://ox-it.github.io/OxfordIDN_Shiny-App-Templates/advanced-shiny-features/loading-data/
   
-  # Application title
-  titlePanel('Cohort Overview'),
-  
   # Sidebar with a slider input for number of bins 
-  sidebarLayout(
-    sidebarPanel(
-      h2('Cohort'),
-      uiOutput('cohort_filter'),
-      h2('Highlight Datapoints'),
-      uiOutput('filter_parameters')
-      # actionButton(
-      #   'resample_button',
-      #   label = 'Resample',
-      #   icon = NULL,
-      #   width = NULL
-      # )
-    ),
-    
-    mainPanel(
-      tabsetPanel(
-        tabPanel("Explore",
+  navbarPage("Cohort Overview",  # Application title
+    tabPanel("Explore",
+      sidebarLayout(
+        sidebarPanel(
+          h2('Cohort'),
+          uiOutput('cohort_filter'),
+          h2('Highlight Datapoints'),
+          uiOutput('filter_parameters')
+          # actionButton(
+          #   'resample_button',
+          #   label = 'Resample',
+          #   icon = NULL,
+          #   width = NULL
+          # )
+        ),
+        
+        mainPanel(
           h1(textOutput('cohort_header')),
           fluidRow(
             div(
@@ -78,18 +75,18 @@ shinyUI(fluidPage(
               height = 1500
             )
           )
-        ),
-        tabPanel("Cohort Comparison",
-          h1('Cohort Comparison, by Categorical Variables'),
-          uiOutput('cohort_comparison_charts')
-        ),
-        tabPanel("Instructions",
-          h1("Instructions for Use"),
-          p("These are instructions for use."),
-          h2("t-SNE"),
-          p("The top of the tab uses a visualization method called t-SNE.")
         )
       )
+    ),
+    tabPanel("Cohort Comparison",
+      h1('Cohort Comparison, by Categorical Variables'),
+      uiOutput('cohort_comparison_charts')
+    ),
+    tabPanel("Instructions",
+      h1("Instructions for Use"),
+      p("These are instructions for use."),
+      h2("t-SNE"),
+      p("The top of the tab uses a visualization method called t-SNE.")
     )
   )
 ))
