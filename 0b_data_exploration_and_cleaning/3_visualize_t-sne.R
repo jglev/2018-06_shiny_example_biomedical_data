@@ -4,13 +4,14 @@
 
 source(file.path('0a_helper_functions', 'check_packages.R'), local = TRUE)
 
+check_packages('clipr')
 check_packages('ggplot2')
 check_packages('tidyverse')
 check_packages('vegalite')
 
 # Load dataset ------------------------------------------------------------
 
-load(file.path('cache', 'dataset.Rdata'))
+load(file.path('cache', 'cleaned_dataset.Rdata'))
 
 # Plot the output ---------------------------------------------------------
 
@@ -39,7 +40,11 @@ vega_spec <- vegalite::vegalite(
   renderer = 'svg'  # For png ('canvas') vs. svg ('svg') exporting
 ) %>%
   cell_size(500, 300) %>%
-  add_data(tsne_model$Y %>% as_data_frame() %>% slice(1:5)) %>%
+  add_data(
+    dataset %>% 
+      dplyr::filter(source == 'cohort1') %>%
+      dplyr::select(tsne_1d_v1)
+  ) %>%
   encode_x("V2", "quantitative") %>%
   encode_y("V1", "quantitative") %>%
   mark_point() %>% 

@@ -56,6 +56,7 @@ shinyUI(fluidPage(
             h2('Selection'),
             DT::dataTableOutput('plot_selection'),
             h3('Age at Beginning of Case'),
+            p('(Mean of selected points marked with gray line, 3*SD marked with pink line)'),
             plotOutput(
               'selection_age_histogram',
               height = 500

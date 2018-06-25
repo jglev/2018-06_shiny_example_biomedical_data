@@ -269,10 +269,31 @@ shinyServer(function(input, output) {
       )
   })
   
+  age_mean_and_sd <- reactive({
+    plot_selection() %>% 
+      dplyr::select(noted_age) %>% 
+      dplyr::summarize(
+        mean = mean(noted_age),
+        sd = sd(noted_age)
+      )
+  })
+  
   output$selection_age_histogram <- renderPlot({
     plot_selection() %>%
     ggplot(aes(x = noted_age)) +
     geom_histogram(bins = 50) +
+    geom_vline(
+      xintercept = age_mean_and_sd()$mean,
+      color = 'slategray'
+    ) +
+    geom_vline(
+      xintercept = age_mean_and_sd()$mean + 3*age_mean_and_sd()$sd,
+      color = 'orchid'
+    ) + 
+    geom_vline(
+      xintercept = age_mean_and_sd()$mean - 3*age_mean_and_sd()$sd,
+      color = 'orchid'
+    ) + 
     xlab('Age in Days') +
     ylab('Number of Cases')
     # renderVegalite({
@@ -312,7 +333,7 @@ shinyServer(function(input, output) {
   
   ## Implement multi-tiered flowing (Sankey / Alluvial) visualization
   output$sankey_diagram <- renderPlot({
-    dataset_alluvial <- data_subset() %>% 
+    dataset_alluvial <- plot_selection() %>% 
       dplyr::select(sex, race, resolved) %>% 
       dplyr::group_by(sex, race, resolved) %>% 
       dplyr::summarize(n = n()) %>% 
