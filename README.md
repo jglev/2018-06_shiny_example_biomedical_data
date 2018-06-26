@@ -68,4 +68,4 @@ After substantial research, however, I concluded that Vega does not yet have a r
 
 ## Style guide
 
-The code in this repository follows the [Tidyverse Style Guide](https://style.tidyverse.org), with occasional additional guidelines (specifically, the use of `##` rather than `#` to delimit text comments) taken from the [Google R Style Guide](https://google.github.io/styleguide/Rguide.xml).
+The code in this repository follows the [Tidyverse Style Guide](http://style.tidyverse.org), with occasional additional guidelines (specifically, the use of `##` rather than `#` to delimit text comments) taken from the [Google R Style Guide](https://google.github.io/styleguide/Rguide.xml).
