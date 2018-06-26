@@ -98,6 +98,8 @@ shinyUI(fluidPage(
       p(
         'The Cohort Comparison tab presents a series of stacked bar charts,',
         'one for each of the categorical variables present in the dataset.',
+        'These charts show category percentages within each cohort, allowing',
+        'comparison even when the cohorts have uneven sizes.',
         'You can scroll down through the tab to compare cohorts on each of',
         'these categorical variables.'
       )
@@ -166,6 +168,10 @@ shinyUI(fluidPage(
     ),
     tabPanel('Cohort Comparison',
       h1('Cohort Comparison, by Categorical Variables'),
+      p(
+        'These charts show category percentages within each cohort, allowing',
+        'comparison even when the cohorts have uneven sizes.'
+      ),
       uiOutput('cohort_comparison_charts')
     )
   )
