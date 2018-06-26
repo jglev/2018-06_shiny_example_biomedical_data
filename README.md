@@ -38,6 +38,13 @@ The checklist of desired elements includes annotations below:
 - Data cleaning is not included in the main dashboard code. Instead, it is implemented through the scripts in the `0b_data_exploration_and_cleaning` directory, which are meant to be run in order on a pre-caching computer.
 - No values (aside from column names) are hard-coded in the codebase.
 
+## Use
+
+1. Open RStudio
+1. Within RStudio, open `1_application/ui.R`.
+1. Click "Run App" in the top right corner of the RStudio editor pane.
+1. The app should launch in a web browser. If it launches in an internal browser, you can click "Open in Browser" in the top left corner of the internal viewer window.
+
 ## Additional Resources
 
 ### t-SNE
