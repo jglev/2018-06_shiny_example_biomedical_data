@@ -55,6 +55,37 @@ shinyUI(fluidPage(
         'closeness on the t-SNE plot means some type of similarity between',
         'cases.'
       ),
+      p(
+        tags$b(
+          'You can filter cases by category using the sidebar on the left',
+          'side of the Explore tab, and then can select specific groups of',
+          'cases from those that are filtered / highlighted by clicking and',
+          'dragging across the t-SNE plot. The information displayed below the',
+          't-SNE plot will update to reflect both filtering from the sidebar',
+          'and clicking and dragging on the t-SNE plot.'
+        )
+      ),
+      h3('Age'),
+      p(
+        'A histogram below the t-SNE plot displays the age distribution',
+        'of the selected cases. The mean of the distribution is shown in',
+        'gray, while three standard deviations from that mean are fenced in',
+        'pink, showing the number of age-based outliers from the selected',
+        'cases.'
+      ),
+      h3('ICD-9 Diagnosis'),
+      p(
+        'A bar chart below displays the distribution of ICD-9 general',
+        'categories -- here, the first digit or letter of the ICD-9 diagnosis',
+        '-- across the selected cases.'
+      ),
+      h3('Resolved (Green) vs. Unresolved (Red) Cases, by Sex and Race'),
+      p(
+        'Finally, a Sankey diagram (also called an Alluvial diagram)',
+        'shows the distribution of sex and race within the selected cases,',
+        'with resolved cases marked in green and non-resolved cases marked',
+        'in red.'
+      ),
       h2('The Cohort Comparison tab'),
       p(
         'The Cohort Comparison tab presents a series of stacked bar charts,',
