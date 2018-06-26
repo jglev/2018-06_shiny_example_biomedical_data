@@ -47,13 +47,21 @@ shinyUI(fluidPage(
         'pre-decimal digits) -- and, in this case, allows graphing similarity',
         'across all of those variables using only a two-axis plot.'
       ),
+      h4('Update timing'),
       p(
-        'The axes in the t-SNE plot at the top of the Explore tab are not',
-        'meaningful in themselves. Rather, the important thing to look at is',
-        'which data points look distant from each other. Distance on the t-SNE',
-        'plot means some type of dissimilarity between cases. Similarly,',
-        'closeness on the t-SNE plot means some type of similarity between',
-        'cases.'
+        'The t-SNE diagram takes approximately 4 seconds to update on a',
+        'commodity laptop. Please be patient as it updates -- the computations',
+        'are quick, but the actual plotting takes several seconds.'
+      ),
+      p(
+        tags$b(
+          'You can filter cases by category using the sidebar on the left',
+          'side of the Explore tab, and then can select specific groups of',
+          'cases from those that are filtered / highlighted by clicking and',
+          'dragging across the t-SNE plot. The information displayed below the',
+          't-SNE plot will update to reflect both filtering from the sidebar',
+          'and clicking and dragging on the t-SNE plot.'
+        )
       ),
       p(
         tags$b(
