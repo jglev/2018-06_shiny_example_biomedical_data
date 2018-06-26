@@ -26,7 +26,7 @@ The checklist of desired elements includes annotations below:
 - [X] Web server component (any language) that serves up the data dynamically to power the page  
   The page is implemented in R with [Shiny](https://shiny.rstudio.com/).
 	- [X] Some elements may be computed on the server, some may be done in JavaScript
-	- [O] Async requests from the browser to the server are preferred  
+	- [ ] Async requests from the browser to the server are preferred  
 	  Async requests have **not yet** been implemented. However, this feature was recently introduced in Shiny, through the use of the `promises` and `future` packages, and is [newly documented](https://rstudio.github.io/promises/articles/shiny.html) (See also the RStudio webinar by Joe Cheng, "https://www.rstudio.com/resources/videos/scaling-shiny-apps-with-async-programming/").
 	- [X] The web page should load in under a second  
 	  The page itself loads in under 1 second, especially rendering the "Guidance" tab first; however, Shiny takes approximately 1 second to load pre-cached cleaned data, and GGplot2 takes approximately 4-5 seconds to render the main t-SNE plot. Precomputing this did not help, unfortunately. In a real-world scenario, I would focus additional future attention on optimizing load and computation time.
