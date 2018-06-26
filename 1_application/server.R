@@ -24,55 +24,6 @@ load(file.path('..', 'cache', 'cleaned_dataset.Rdata'))
 ## Define server-side logic
 shinyServer(function(input, output) {
   
-  # resample_slider_min <- dplyr::case_when(
-  #   nrow(dataset) > 1000 ~ 1000,
-  #   nrow(dataset) > 100 ~ 100,
-  #   TRUE ~ 1
-  # )
-  # resample_slider_max <- nrow(dataset)
-  # resample_slider_step <- dplyr::case_when(
-  #   nrow(dataset) > 1000 ~ 100,
-  #   nrow(dataset) > 20 ~ 10,
-  #   TRUE ~ 1
-  # )
-  # resample_slider_value <- min(
-  #   mean(c(resample_slider_min, resample_slider_max)),
-  #   1000
-  # )
-  # 
-  # output$resample_slider <- renderUI({
-  #   sliderInput(
-  #     'sample_size',
-  #     label = 'Sample Size',
-  #     min = resample_slider_min,
-  #     max = resample_slider_max,
-  #     ## Tests with tsne show that runs are *much* faster at n ~ 1000
-  #     ## (at the cost of accuracy, but users probably aren't going to
-  #     ## want to wait for tens of minutes for a run to complete). Thus,
-  #     ## we'll set an initial value at max 1000.
-  #     value = resample_slider_value,
-  #     step = resample_slider_step,
-  #     round = TRUE,
-  #     animate = FALSE,
-  #     dragRange = TRUE
-  #   )
-  # })
-  # 
-  # resample_data <- function(sample_size = resample_slider_value) {
-  #   dataset %>% 
-  #     tibble::as.tibble() %>% 
-  #     dplyr::select(mpg, cyl, disp, hp, wt, am, gear) %>% 
-  #     dplyr::sample_n(
-  #       as.integer(sample_size)
-  #     )
-  # }
-  # 
-  # ## Resample each time the action button is pressed
-  # data_subset <- eventReactive(input$resample_button, {
-  #   req(input$sample_size)
-  #   resample_data(input$sample_size)
-  # })
-  
   # Render general information about the dataset ----------------------------
   
   output$introduction_to_dataset <- renderText({
@@ -99,6 +50,8 @@ shinyServer(function(input, output) {
     
     paste0("Cohort: ", input$cohort)
   })
+  
+  # Render UI filter elements -----------------------------------------------
   
   get_levels <- function(column_name) {
     dataset %>% pull(!!as.name(column_name)) %>% levels()
@@ -165,6 +118,8 @@ shinyServer(function(input, output) {
       )
     )
   })
+  
+  # Filter data -------------------------------------------------------------
   
   filter_from_input <- function(lhs, input_name, column_to_filter) {
     lhs %>% 
@@ -236,6 +191,8 @@ shinyServer(function(input, output) {
     vis
   })
   
+  # Select points from t-SNE scatterplot ------------------------------------
+  
   plot_selection <- reactive({
     # Because it's a ggplot2, we don't need to supply xvar or yvar; if this
     # were a base graphics plot, we'd need those.
@@ -265,6 +222,10 @@ shinyServer(function(input, output) {
     }
   })
   
+  # Create output based on t-SNE point selection ----------------------------
+  
+  # Table of cases ----------------------------------------------------------
+  
   output$plot_selection <- DT::renderDataTable({
     plot_selection() %>% 
       select(
@@ -290,6 +251,8 @@ shinyServer(function(input, output) {
         # `ICD-9 General Category` = icd9_general
       )
   })
+  
+  # Age histogram -----------------------------------------------------------
   
   age_mean_and_sd <- reactive({
     plot_selection() %>% 
@@ -332,6 +295,8 @@ shinyServer(function(input, output) {
       #   mark_bar()
     })
   
+  # ICD-9 bar chart ---------------------------------------------------------
+  
   output$selection_icd9_top_chart <- renderPlot({
     plot_selection() %>%
       ggplot(aes(x = icd9_top)) +
@@ -353,8 +318,8 @@ shinyServer(function(input, output) {
       #   mark_bar()
   })
   
-  # Implement multi-tiered flowing (Sankey / Alluvial) visualization -------
-  
+  # Multi-tiered flowing (Sankey / Alluvial) visualization ------------------
+
   output$sankey_diagram <- renderPlot({
     dataset_alluvial <- plot_selection() %>% 
       dplyr::select(sex, race, resolved) %>% 
