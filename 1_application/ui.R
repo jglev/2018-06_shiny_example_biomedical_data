@@ -69,7 +69,7 @@ shinyUI(fluidPage(
       ),
       h4('Update timing'),
       p(
-        'The t-SNE diagram takes approximately 5 seconds to update on a',
+        'The t-SNE diagram takes approximately 5 seconds to load or update on a',
         'commodity laptop. Please be patient as it updates -- the computations',
         'are quick, but the actual plotting takes several seconds.'
       ),
