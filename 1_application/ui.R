@@ -18,16 +18,43 @@ shinyUI(fluidPage(
   navbarPage('Cohort Explorer',  # Application title
     tabPanel('Instructions',
       p(textOutput('introduction_to_dataset')),
-      h1('Instructions for Use'),
+      h1('Guidance for Use'),
       p(
         'This page has two tabs for data analysis.',
         'The', tags$b('Explore'), 'tab is for understanding each cohort',
         tags$b('individually.'), 'The', tags$b('Cohort Comparison'), 'tab is',
         'for understanding the', tags$b('relationship between cohorts.')
       ),
+      p(
+        'Note that across these tabs, each data point is an',
+        tags$b('individual case,', tags$i('not'), 'an individual patient.')
+      ),
       h2('The Explore tab'),
       h3('t-SNE'),
-      p('The top of the tab uses a visualization method called t-SNE.'),
+      p(
+        'The top of the tab uses a visualization method called t-SNE',
+        '(t-distributed stochastic neighbor embedding). t-SNE can be used for',
+        tags$a(
+          href = 'https://medium.com/@Zelros/anomaly-detection-with-t-sne-211857b1cd00',
+          'anomaly detection,'
+        ),
+        'because it displays "closeness" between cases.'
+      ),
+      p(
+        't-SNE takes multiple variables -- in this case, sex, ethnicity,',
+        'race, age at beginning of a case, whether the case was resolved,',
+        'and diagnosis general category (i.e., the ICD-9 code',
+        'pre-decimal digits) -- and, in this case, allows graphing similarity',
+        'across all of those variables using only a two-axis plot.'
+      ),
+      p(
+        'The axes in the t-SNE plot at the top of the Explore tab are not',
+        'meaningful in themselves. Rather, the important thing to look at is',
+        'which data points look distant from each other. Distance on the t-SNE',
+        'plot means some type of dissimilarity between cases. Similarly,',
+        'closeness on the t-SNE plot means some type of similarity between',
+        'cases.'
+      ),
       h2('The Cohort Comparison tab'),
       p(
         'The Cohort Comparison tab presents a series of stacked bar charts,',
