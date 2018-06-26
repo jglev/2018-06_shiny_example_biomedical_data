@@ -47,31 +47,31 @@ shinyUI(fluidPage(
         'pre-decimal digits) -- and, in this case, allows graphing similarity',
         'across all of those variables using only a two-axis plot.'
       ),
+      p(
+        tags$b(
+          'You can filter cases by category using the sidebar on the left',
+          'side of the Explore tab, and then can select specific groups of',
+          'cases from those that are filtered / highlighted by clicking and',
+          'dragging across the t-SNE plot. The information displayed below the',
+          't-SNE plot will update to reflect both filtering from the sidebar',
+          'and clicking and dragging on the t-SNE plot.'
+        )
+      ),
+      p(
+        tags$b(
+          'You can filter cases by category using the sidebar on the left',
+          'side of the Explore tab, and then can select specific groups of',
+          'cases from those that are filtered / highlighted by clicking and',
+          'dragging across the t-SNE plot. The information displayed below the',
+          't-SNE plot will update to reflect both filtering from the sidebar',
+          'and clicking and dragging on the t-SNE plot.'
+        )
+      ),
       h4('Update timing'),
       p(
-        'The t-SNE diagram takes approximately 4 seconds to update on a',
+        'The t-SNE diagram takes approximately 5 seconds to update on a',
         'commodity laptop. Please be patient as it updates -- the computations',
         'are quick, but the actual plotting takes several seconds.'
-      ),
-      p(
-        tags$b(
-          'You can filter cases by category using the sidebar on the left',
-          'side of the Explore tab, and then can select specific groups of',
-          'cases from those that are filtered / highlighted by clicking and',
-          'dragging across the t-SNE plot. The information displayed below the',
-          't-SNE plot will update to reflect both filtering from the sidebar',
-          'and clicking and dragging on the t-SNE plot.'
-        )
-      ),
-      p(
-        tags$b(
-          'You can filter cases by category using the sidebar on the left',
-          'side of the Explore tab, and then can select specific groups of',
-          'cases from those that are filtered / highlighted by clicking and',
-          'dragging across the t-SNE plot. The information displayed below the',
-          't-SNE plot will update to reflect both filtering from the sidebar',
-          'and clicking and dragging on the t-SNE plot.'
-        )
       ),
       h3('Age'),
       p(
