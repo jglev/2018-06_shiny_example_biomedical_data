@@ -19,7 +19,7 @@ The checklist of desired elements includes annotations below:
 - [X] Summary tables and other sections can be used to highlight certain points  
   The "Explore" tab includes a table of selected cases, with several summary visualizations.
 - [X] Have a section or callout to outliers  
-    (The t-SNE output is intended to call out outliers in an interactive way. Age-SD-based-outlier display (mean of selected cases, +/- 3*SD) is also features in the "Explore" tab). 
+    (The t-SNE output is intended to call out outliers in an interactive way. Age-SD-based-outlier display (mean of selected cases, +/- 3*SD) is also featured in the "Explore" tab). 
 	- [X] Include the reason why it is an outlier based on the method used (For example, a value is 3 times the stdev of the other points)  
 	  Although t-SNE is somewhat of a black box in clarifying *what* about a set of points is different from another set of points, the "Guidance" tab provides an overview of this visualization technique.  
 	  Further, age-based outlier detection within a sampled set of points is also explained in the "Guidance" tab, and is clearly indicated above the age histogram.
@@ -42,6 +42,7 @@ The checklist of desired elements includes annotations below:
 
 1. Open RStudio
 1. Within RStudio, open `1_application/ui.R`.
+1. Within RStudio, click "Session" --> "Set Working Directory" --> "To Source File Location"
 1. Click "Run App" in the top right corner of the RStudio editor pane.
 1. The app should launch in a web browser. If it launches in an internal browser, you can click "Open in Browser" in the top left corner of the internal viewer window.
 
@@ -72,7 +73,8 @@ After substantial research, however, I concluded that Vega does not yet have a r
 - As mentioned above, currently, `ggplot2` is used in place of `vega`, as the latter took substantially longer to render on my development laptop.
 - The emphasis on visual inspection of the t-SNE scatterplot means that this interface is not particularly (or perhaps at all) accessible to clinicians and researchers who have limited vision. Researching and developing approaches to convey the t-SNE output (and scatterplot output more generally) to users through a screen reader could be a fruitful future step. This could also be accomplished, e.g., by running the t-SNE output through a clustering algorithm such as k-means, and then summarizing the output of that. However, [t-SNE output cannot always be cluster-analyzed](https://stats.stackexchange.com/questions/263539/clustering-on-the-output-of-t-sne/264647#264647), because the t-SNE algorithm does not preserve distance.
 - This development involved a lot of research into interface possibilities with Shiny. Now that the interface design has settled, in a real-world scenario, I would focus on adding both unit tests and functional tests (the latter, for example, through the new [Shinytest](https://www.rstudio.com/resources/webinars/testing-shiny-applications-with-shinytest/) package).
+    - Further, there are several internal functions that, ideally, should receive full ROxygen-based documentation.
 
-## Style guide
+## Style Guide
 
 The code in this repository follows the [Tidyverse Style Guide](http://style.tidyverse.org), with occasional additional guidelines (specifically, the use of `##` rather than `#` to delimit text comments) taken from the [Google R Style Guide](https://google.github.io/styleguide/Rguide.xml).
