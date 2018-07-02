@@ -1,6 +1,11 @@
+The files contained in this repository are released under a BSD 3-Clause license, copyright 2018, Jacob Levernier, with note of the following:
+
+- Files in the `data` directory are redistributed with permission from the Children's Hospital of Philadelphia (CHOP).
+- Many files in the `packrat` directory come with their own license terms, which are redistributed within this repository alongside those files.
+
 BSD 3-Clause License
 
-Copyright (c) 2018, Jacob Levernier
+Copyright 2018, Jacob Levernier
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

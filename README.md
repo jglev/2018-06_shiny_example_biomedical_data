@@ -40,11 +40,22 @@ The checklist of desired elements includes annotations below:
 
 ## Use
 
-1. Open RStudio
-1. Within RStudio, open `1_application/ui.R`.
-1. Within RStudio, click "Session" --> "Set Working Directory" --> "To Source File Location"
-1. Click "Run App" in the top right corner of the RStudio editor pane.
-1. The app should launch in a web browser. If it launches in an internal browser, you can click "Open in Browser" in the top left corner of the internal viewer window.
+The instructions below assume that [R](https://cran.cnr.berkeley.edu/) and [RStudio](https://www.rstudio.com/products/rstudio/download/#download) are installed.
+
+1. Open RStudio.
+1. Within RStudio, click File --> "Open Project..."
+1. Select `2018-06_shiny_example_biomedical_data.Rproj`.
+1. **RStudio will now pause as it installs packages.** This installation process only needs to happen once.
+  1. RStudio will present output as it completes these tasks (for example, `Installing rstudioapi...`.
+  1. Some of the installation steps (for example, for the `BH`, `stringi`, and `dplyr` packages) may take a minute or more.
+  1. If RStudio offers a `y/n` prompt, type "y" and press Enter.
+  1. **When RStudio is finished, it will print the message, "Packrat bootstrap successfully completed."** Once this happens, R will restart, and you will be able to run any command in the console (for example, at this point, if you type `2+2` next to the `>` prompt in the "Console" pane and press Enter, R should return `4`).
+1. Once RStudio is finished installing packages above:
+    1. Within RStudio, open `1_application/ui.R`.
+    1. Within RStudio, click "Session" --> "Set Working Directory" --> "To Source File Location"
+    1. Click "Run App" in the top right corner of the RStudio editor pane.
+    1. RStudio may ask to install an updated version of the `shiny` package. Click "Yes".
+    1. The app should launch in a web browser. If it launches in an internal browser, you can click "Open in Browser" in the top left corner of the internal viewer window.
 
 ## Additional Resources
 
@@ -74,6 +85,8 @@ After substantial research, however, I concluded that Vega does not yet have a r
 - The emphasis on visual inspection of the t-SNE scatterplot means that this interface is not particularly (or perhaps at all) accessible to clinicians and researchers who have limited vision. Researching and developing approaches to convey the t-SNE output (and scatterplot output more generally) to users through a screen reader could be a fruitful future step. This could also be accomplished, e.g., by running the t-SNE output through a clustering algorithm such as k-means, and then summarizing the output of that. However, [t-SNE output cannot always be cluster-analyzed](https://stats.stackexchange.com/questions/263539/clustering-on-the-output-of-t-sne/264647#264647), because the t-SNE algorithm does not preserve distance.
 - This development involved a lot of research into interface possibilities with Shiny. Now that the interface design has settled, in a real-world scenario, I would focus on adding both unit tests and functional tests (the latter, for example, through the new [Shinytest](https://www.rstudio.com/resources/webinars/testing-shiny-applications-with-shinytest/) package).
     - Further, there are several internal functions that, ideally, should receive full ROxygen-based documentation.
+- While the app is running, I have allowed `ggplot2` to produce a warning that notes when there are data rows that are left out of visualizations because of incomplete data. I decided to leave this in (rather than adding an `na.omit()` line in the code) to improve initial diagnostics as the app runs, pointing out the number of rows that remain with missing data even after data cleaning. This warning could be turned off / the missing data removed more gracefully in the future.
+- To facilitate development, this app uses the `tidyverse` package, which is a wrapper for loading several related packages. In the future, this app could be made more lean by replacing the call to the `tidyverse` package with a call to specific packages within that wrapper package.
 
 ## Style Guide
 
