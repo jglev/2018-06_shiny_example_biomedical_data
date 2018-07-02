@@ -6,8 +6,10 @@
 
 source(file.path('..', '0a_helper_functions', 'check_packages.R'), local = TRUE)
 
+check_packages('DT')
 check_packages('shiny')
 check_packages('shinyjs')
+check_packages('vegalite')
 
 ## Define UI ---------------------------------------------------------------
 
