@@ -42,17 +42,21 @@ The checklist of desired elements includes annotations below:
 
 The instructions below assume that [R](https://cran.cnr.berkeley.edu/) and [RStudio](https://www.rstudio.com/products/rstudio/download/#download) are installed.
 
+The instructions below have been tested using RStudio for Linux version 1.1.442 and RStudio for Mac OSX version 1.0.153.
+
 1. Open RStudio.
 1. Within RStudio, click File --> "Open Project..."
 1. Select `2018-06_shiny_example_biomedical_data.Rproj`.
 1. **RStudio will now pause as it installs packages.** This installation process only needs to happen once.
-  1. RStudio will present output as it completes these tasks (for example, `Installing rstudioapi...`.
+  1. RStudio will present output as it completes these tasks (for example, `Installing rstudioapi...`).
   1. Some of the installation steps (for example, for the `BH`, `stringi`, and `dplyr` packages) may take a minute or more.
   1. If RStudio offers a `y/n` prompt, type "y" and press Enter.
   1. **When RStudio is finished, it will print the message, "Packrat bootstrap successfully completed."** Once this happens, R will restart, and you will be able to run any command in the console (for example, at this point, if you type `2+2` next to the `>` prompt in the "Console" pane and press Enter, R should return `4`).
 1. Once RStudio is finished installing packages above:
+    1. **Close RStudio (no need to save `.Rdata` when prompted), then reopen it and open the project again** (following the initial steps above).  
+    Closing and re-opening RStudio will cause RStudio to recognize the packages it installed above to the project directory.
     1. Within RStudio, open `1_application/ui.R`.
-    1. Within RStudio, click "Session" --> "Set Working Directory" --> "To Source File Location"
+    1. **Within RStudio, click "Session" --> "Set Working Directory" --> "To Source File Location"**
     1. Click "Run App" in the top right corner of the RStudio editor pane.
     1. RStudio may ask to install an updated version of the `shiny` package. Click "Yes".
     1. The app should launch in a web browser. If it launches in an internal browser, you can click "Open in Browser" in the top left corner of the internal viewer window.
